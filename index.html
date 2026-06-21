@@ -1,0 +1,1142 @@
+<!DOCTYPE html>
+<!--
+  ============================================================================
+  MARTIN C. SKACEL — STUDENT PORTFOLIO
+  ============================================================================
+  Single-file site (HTML + CSS + JS, no build step).
+
+  DIRECTION: a balance between a refined-technical layout and a natural,
+  grounded sustainability feel. Dominant DARK FOREST GREEN background (not
+  black), with warm cream/sand text, soft sage, and black/neutral accents.
+
+  HOW TO EDIT
+  -----------
+  1. TEXT       -> edit inside the HTML section blocks below.
+  2. PROJECTS   -> all tiles come from the PROJECTS array in <script>.
+  3. IMAGES     -> add an "image" URL to any project for a real photo;
+                   replace the .about-photo background for your headshot.
+  4. DARTMOUTH LOGO -> see the .brand-logo <img> in the header. Drop a logo
+                   file next to this HTML and set its src, or paste a URL.
+  5. COLORS     -> CSS variables in :root at the top.
+  6. EXPERIENCE -> edit timeline items directly in the EXPERIENCE HTML.
+  7. CONTACT    -> update email / phone / LinkedIn in CONTACT and footer.
+  8. HERO GALLERY -> three image slots under the Interests box. See the
+                   .hero-gallery markup in the HERO section to swap images.
+  ============================================================================
+-->
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Martin C. Skacel — Student Portfolio</title>
+  <meta name="description" content="Martin C. Skacel — Dartmouth student portfolio. Mechanical & energy engineering with an earth sciences minor; interests in energy, climate, and sustainability." />
+
+  <!-- FONTS: a middle-ground pairing.
+       - Display: "Bricolage Grotesque" (characterful but professional grotesk)
+       - Body:    "Outfit" (clean, friendly, neutral)
+       - Mono:    "IBM Plex Mono" (subtle technical/engineering labels) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%230b1522'/%3E%3Ctext x='50' y='71' font-family='Georgia,serif' font-size='62' font-weight='700' fill='%237fc99a' text-anchor='middle'%3EM%3C/text%3E%3C/svg%3E" />
+
+  <style>
+    /* ===== 1. DESIGN TOKENS (edit colors/fonts here) ===== */
+    :root {
+      /* Dominant dark forest green base + warm light neutrals */
+      --bg:        #0b1522;   /* dark forest green (page base) */
+      --bg-2:      #1b2f25;   /* lifted panel green */
+      --surface:   #213a2d;   /* card surface */
+      --surface-2: #1a2e23;   /* alt surface */
+
+      --cream:     #f1ede1;   /* warm cream — primary text */
+      --sand:      #cbcbb8;   /* soft sand — secondary text */
+      --faint:     #8ba390;   /* muted green-grey — captions/meta */
+
+      --moss:      #7fc99a;   /* fresh sage/moss accent */
+      --moss-deep: #5fae7e;   /* deeper accent for hovers */
+      --sage:      #a9cdb4;   /* light sage */
+      --clay:      #d9a166;   /* warm clay (earth/energy accent) */
+      --gold:      #e8b54d;   /* award/highlight gold */
+
+      --ink:       #0d1813;   /* near-black for contrast text on light */
+      --line:      rgba(168,205,180,0.16);   /* hairline borders */
+      --glass:     rgba(27,47,37,0.6);
+
+      --font-display:'Fraunces',serif;
+      --font-body:'Inter',sans-serif;
+      --font-mono:'IBM Plex Mono',monospace;
+
+      --maxw:1160px; --radius:16px;
+    }
+
+    /* ===== 2. RESET & BASE ===== */
+    *{margin:0;padding:0;box-sizing:border-box;}
+    html{scroll-behavior:smooth;-webkit-font-smoothing:antialiased;}
+    body{background:var(--bg);color:var(--cream);font-family:var(--font-body);font-weight:400;line-height:1.65;overflow-x:hidden;position:relative;}
+    a{color:inherit;text-decoration:none;}
+    img{display:block;max-width:100%;}
+    ::selection{background:var(--moss);color:var(--ink);}
+    ::-webkit-scrollbar{width:10px;}
+    ::-webkit-scrollbar-track{background:var(--bg);}
+    ::-webkit-scrollbar-thumb{background:#2c4a3a;border-radius:10px;}
+    ::-webkit-scrollbar-thumb:hover{background:var(--moss-deep);}
+
+    /* ===== 3. BACKGROUND (soft glow + faint contour grid, calm) ===== */
+    .bg-layer{position:fixed;inset:0;z-index:-2;pointer-events:none;
+      background:radial-gradient(ellipse 75% 55% at 78% -5%,rgba(127,201,154,0.10),transparent 60%),
+                 radial-gradient(ellipse 60% 50% at 5% 105%,rgba(217,161,102,0.06),transparent 55%),var(--bg);}
+    .bg-grid{position:fixed;inset:0;z-index:-1;pointer-events:none;opacity:.6;
+      background-image:linear-gradient(rgba(168,205,180,0.05) 1px,transparent 1px),linear-gradient(90deg,rgba(168,205,180,0.05) 1px,transparent 1px);
+      background-size:42px 42px;
+      -webkit-mask-image:radial-gradient(ellipse 100% 75% at 50% 25%,black 35%,transparent 88%);
+              mask-image:radial-gradient(ellipse 100% 75% at 50% 25%,black 35%,transparent 88%);}
+
+    /* ===== 4. LAYOUT HELPERS ===== */
+    .wrap{width:100%;max-width:var(--maxw);margin:0 auto;padding:0 28px;}
+    section{padding:65px 0;position:relative;}
+    .eyebrow{font-family:var(--font-mono);font-size:.76rem;letter-spacing:.18em;text-transform:uppercase;color:var(--moss);display:inline-flex;align-items:center;gap:10px;}
+    .eyebrow::before{content:"";width:26px;height:1px;background:var(--moss);display:inline-block;}
+    h2.section-title{font-family:var(--font-display);font-weight:600;font-size:clamp(2rem,4.2vw,3.2rem);line-height:1.05;letter-spacing:-.02em;margin:16px 0 0;color:var(--cream);}h2.about-title{font-size:clamp(1.6rem,3.2vw,2.4rem);}
+    .section-title em{font-style:italic;font-weight:500;color:var(--moss);}
+    .section-title .glow-energy{color:#ffae3c;text-shadow:0 0 14px rgba(255,174,60,.15),0 0 28px rgba(255,140,0,.05);}
+    .award{color:var(--gold)!important;}
+
+    /* ===== 5. NAV ===== */
+    header.nav{position:fixed;top:0;left:0;right:0;z-index:100;transition:background .4s,backdrop-filter .4s,border-color .4s;border-bottom:1px solid transparent;}
+    header.nav.scrolled{background:rgba(20,36,28,0.82);backdrop-filter:blur(12px);border-bottom:1px solid var(--line);}
+    .nav-inner{display:flex;align-items:center;justify-content:space-between;padding:18px 28px;max-width:var(--maxw);margin:0 auto;}
+    .brand{display:flex;align-items:center;gap:14px;}
+    /* Dartmouth logo slot — replace src with your logo file/URL.
+       Falls back to a small green monogram circle if image missing. */
+    .brand-logo{height:34px;width:auto;display:block;}
+    .brand-logo-fallback{height:34px;width:34px;border-radius:50%;background:var(--moss);color:var(--ink);display:none;place-items:center;font-family:var(--font-display);font-weight:700;font-size:.95rem;}
+    .brand-text{display:flex;flex-direction:column;line-height:1.1;}
+    .brand-text .name{font-family:var(--font-display);font-weight:600;font-size:1.02rem;color:var(--cream);letter-spacing:-.01em;}
+    .brand-text .sub{font-family:var(--font-mono);font-size:.66rem;letter-spacing:.14em;text-transform:uppercase;color:var(--faint);}
+    .nav-links{display:flex;gap:28px;align-items:center;}
+    .nav-links a{font-size:.92rem;color:var(--sand);position:relative;padding:4px 0;transition:color .25s;}
+    .nav-links a::after{content:"";position:absolute;left:0;bottom:-2px;width:0;height:1.5px;background:var(--moss);transition:width .3s;}
+    .nav-links a:hover{color:var(--cream);}
+    .nav-links a:hover::after{width:100%;}
+    .nav-links a.active{color:var(--cream);}
+    .nav-links a.active::after{width:100%;}
+    .nav-cta{border:none;color:var(--moss);padding:9px 0;font-size:.88rem;transition:all .3s;}
+    .nav-cta:hover{color:var(--cream);}
+    .nav-toggle{display:none;background:none;border:none;cursor:pointer;flex-direction:column;gap:5px;}
+    .nav-toggle span{width:26px;height:2px;background:var(--cream);transition:.3s;border-radius:2px;}
+
+    /* ===== 6. HERO ===== */
+    .hero{min-height:96vh;display:flex;align-items:center;padding-top:92px;}
+    .hero-grid{display:grid;grid-template-columns:1fr 1fr;gap:54px;align-items:center;}
+    .hero-status{font-family:var(--font-mono);font-size:.8rem;color:var(--faint);letter-spacing:.08em;display:inline-flex;align-items:center;gap:9px;margin-bottom:24px;}
+    .hero-status .loc{width:7px;height:7px;border-radius:50%;background:var(--moss);box-shadow:0 0 10px rgba(127,201,154,.6);}
+    .hero .portfolio-tag{font-family:var(--font-mono);font-size:.8rem;letter-spacing:.28em;text-transform:uppercase;color:var(--moss);margin-bottom:14px;}
+    .hero h1{font-family:var(--font-display);font-weight:700;font-size:clamp(2.7rem,7vw,5.4rem);line-height:.96;letter-spacing:-.03em;color:var(--cream);}
+    .hero h1 .line{display:block;overflow:hidden;}
+    .hero h1 .line span{display:block;transform:translateY(110%);animation:riseIn .9s cubic-bezier(.16,1,.3,1) forwards;}
+    .hero h1 .line:nth-child(2) span{animation-delay:.1s;}
+    @keyframes riseIn{to{transform:translateY(0);}}
+    .name-sub{font-family:'DM Mono',monospace;font-weight:500;font-size:clamp(1.1rem,2vw,1.5rem);color:#3da9fc;margin-top:14px;letter-spacing:.02em;text-shadow:0 0 12px rgba(61,169,252,.25);opacity:0;animation:fadeUp .9s ease .42s forwards;}
+    .hero-sub{font-family:var(--font-body);font-size:clamp(1.05rem,1.7vw,1.28rem);color:var(--sand);max-width:540px;margin:26px 0 36px;opacity:0;animation:fadeUp .9s ease .5s forwards;}
+    .hero-sub strong{color:var(--cream);font-weight:500;}
+    @keyframes fadeUp{from{opacity:0;transform:translateY(16px);}to{opacity:1;transform:translateY(0);}}
+    .hero-actions{display:flex;gap:14px;flex-wrap:wrap;opacity:0;animation:fadeUp .9s ease .65s forwards;}
+    .btn{font-size:.95rem;padding:13px 24px;border-radius:100px;display:inline-flex;align-items:center;gap:9px;transition:all .3s;cursor:pointer;border:none;}
+    .btn-primary{background:var(--moss);color:var(--ink);font-weight:500;}
+    .btn-primary:hover{background:var(--moss-deep);transform:translateY(-2px);}
+    .btn-ghost{border:1px solid var(--line);color:var(--cream);background:transparent;}
+    .btn-ghost:hover{border-color:var(--moss);color:var(--moss);}
+    /* Small affiliations row under the hero buttons */
+    .affil{display:flex;align-items:center;gap:10px;margin-top:40px;opacity:0;animation:fadeUp .9s ease .8s forwards;}
+    .affil-lead{height:26px;width:auto;opacity:.9;}
+    .affil-items{display:flex;align-items:center;gap:20px;flex-wrap:wrap;}
+    .affil-item{display:flex;align-items:center;gap:8px;font-size:.82rem;color:var(--sand);transition:color .25s;}
+    .affil-item img{height:20px;width:auto;opacity:.85;transition:opacity .25s;}
+    .affil-item:hover{color:var(--cream);}
+    .affil-item:hover img{opacity:1;}
+    @media(max-width:560px){.affil{flex-direction:column;align-items:flex-start;gap:12px;}}
+    /* Right column of the hero: stack the Interests card + image gallery */
+    .hero-side{display:flex;flex-direction:column;gap:18px;margin-top:34px;opacity:0;animation:fadeUp 1s ease .4s forwards;}
+    .hero-card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:26px;box-shadow:0 16px 40px rgba(0,0,0,.25);}
+    .hero-card .card-label{font-family:var(--font-mono);font-size:.72rem;color:var(--faint);letter-spacing:.12em;text-transform:uppercase;margin-bottom:18px;}
+    .focus-list{list-style:none;display:flex;flex-direction:column;gap:15px;}
+    .focus-list li{display:flex;align-items:center;gap:12px;font-size:.96rem;color:var(--sand);}
+    .focus-list li .ic{font-size:1.1rem;}
+    .focus-list li b{color:var(--cream);font-weight:500;}
+/* Hero scatter gallery — 2x2 base grid, but each slot is nudged and
+       slightly rotated so it looks naturally scattered, not a rigid grid. */
+    .hero-scatter{display:grid;grid-template-columns:1fr 1fr;gap:20px;}
+    .hero-scatter .shot{position:relative;border-radius:var(--radius);overflow:hidden;aspect-ratio:1/1;transition:transform .5s cubic-bezier(.16,1,.3,1);}
+    .hero-scatter .shot img{width:100%;height:100%;object-fit:cover;display:block;}
+    .hero-scatter .shot:hover{transform:translateY(-6px) rotate(0deg) !important;}  /* straighten + lift on hover */
+
+    /* The GIF slot keeps a frame (box, border, shadow) */
+    .hero-scatter .shot-gif{border:1px solid var(--line);background:linear-gradient(160deg,#2b4a39,#1a2e23);box-shadow:0 14px 34px rgba(0,0,0,.26);}
+
+    /* Floating PNG slots: no box, whole image shown, shape-hugging shadow */
+    .hero-scatter .shot.float img{object-fit:contain;filter:drop-shadow(0 14px 22px rgba(0,0,0,.45));}
+
+    /* Scatter: nudge each slot a different direction + tilt for a natural feel */
+    .hero-scatter .pos1{transform:translate(-6px,-14px) rotate(-3deg);}
+    .hero-scatter .pos2{transform:translate(14px,6px) rotate(2.5deg);}
+    .hero-scatter .pos3{transform:translate(-12px,12px) rotate(2deg);}
+    .hero-scatter .pos4{transform:translate(10px,-8px) rotate(-2deg);}
+
+    /* Placeholder label shown until you drop in an image */
+    .hero-scatter .shot .ph{position:absolute;inset:0;display:grid;place-items:center;font-family:var(--font-mono);font-size:.65rem;letter-spacing:.14em;color:var(--faint);text-transform:uppercase;}
+    .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:24px;margin-top:64px;padding-top:38px;border-top:1px solid var(--line);}
+    .stat .num{font-family:var(--font-display);font-weight:700;font-size:clamp(1.7rem,3vw,2.5rem);color:var(--moss);letter-spacing:-.02em;}
+    .stat .num span{font-size:1.05rem;}
+    .stat .lbl{font-size:.85rem;color:var(--faint);margin-top:4px;}
+
+    /* ===== 7. SCROLL REVEAL ===== */
+    .reveal{opacity:0;transform:translateY(28px);transition:opacity .8s cubic-bezier(.16,1,.3,1),transform .8s cubic-bezier(.16,1,.3,1);}
+    .reveal.in{opacity:1;transform:translateY(0);}
+    .reveal[data-delay="1"]{transition-delay:.08s;}
+    .reveal[data-delay="2"]{transition-delay:.16s;}
+    .reveal[data-delay="3"]{transition-delay:.24s;}
+
+    /* ===== 8. ABOUT ===== */
+    .about-grid{display:grid;grid-template-columns:0.85fr 1.15fr;gap:56px;align-items:start;margin-top:46px;}
+    .about-photo{position:relative;border-radius:var(--radius);overflow:hidden;aspect-ratio:4/5;background:linear-gradient(160deg,#2b4a39,#1a2e23);border:1px solid var(--line);display:grid;place-items:center;box-shadow:0 16px 40px rgba(0,0,0,.28);}
+    .about-photo img{width:100%;height:100%;object-fit:cover;}
+    .about-photo .ph-mark{font-family:var(--font-display);font-weight:700;font-size:4.5rem;color:rgba(127,201,154,.22);}
+    .about-body p{color:var(--sand);font-size:1.05rem;margin-bottom:18px;}
+    .about-body p .hl{color:var(--moss);font-style:italic;font-family:var(--font-display);}
+    .about-body strong{color:var(--cream);font-weight:500;}
+    .skills-label{font-family:var(--font-mono);font-size:.74rem;color:var(--faint);letter-spacing:.12em;text-transform:uppercase;margin:30px 0 14px;}
+    .pill-row{display:flex;flex-wrap:wrap;gap:10px;}
+    .pill{font-family:var(--font-mono);font-size:.78rem;padding:7px 14px;border:1px solid var(--line);border-radius:100px;color:var(--sand);background:var(--surface-2);transition:.28s;cursor:default;}
+    .pill:hover{background:var(--moss);border-color:var(--moss);color:var(--ink);transform:translateY(-2px);}
+    .honors{margin-top:34px;}
+    .honors-list{list-style:none;display:flex;flex-direction:column;gap:9px;border-left:2px solid var(--line);padding-left:18px;}
+    .honors-list li{font-size:.92rem;color:var(--sand);position:relative;line-height:1.4;}
+    .honors-list li::before{content:"";position:absolute;left:-19px;top:.55em;width:6px;height:6px;border-radius:50%;background:var(--moss);transform:translateX(-2px);}
+    .honors-list li span{color:var(--faint);font-size:.84rem;}
+
+    /* ===== 9. PROJECTS ===== */
+    .filters{display:flex;gap:10px;flex-wrap:wrap;margin-top:28px;}
+    .filter-btn{font-family:var(--font-mono);font-size:.8rem;padding:8px 16px;border-radius:100px;border:1px solid var(--line);background:transparent;color:var(--sand);cursor:pointer;transition:.25s;}
+    .filter-btn:hover{color:var(--cream);border-color:var(--moss);}
+    .filter-btn.active{background:var(--moss);color:var(--ink);border-color:var(--moss);}
+    .proj-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;margin-top:40px;}
+    .card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;cursor:pointer;position:relative;transition:transform .4s cubic-bezier(.16,1,.3,1),box-shadow .4s,border-color .4s;display:flex;flex-direction:column;}
+    .card::before{content:"";position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--moss),var(--sage));transform:scaleX(0);transform-origin:left;transition:transform .45s cubic-bezier(.16,1,.3,1);z-index:3;}
+    .card:hover{transform:translateY(-8px);border-color:var(--moss);box-shadow:0 26px 60px rgba(0,0,0,.45);}
+    .card:hover::before{transform:scaleX(1);}
+    .card-media{aspect-ratio:16/10;position:relative;overflow:hidden;display:grid;place-items:center;background-size:cover;background-position:center;transition:transform .55s cubic-bezier(.16,1,.3,1);}
+    .card:hover .card-media{transform:scale(1.05);}
+    .card-media .glyph{font-size:2.4rem;opacity:.95;transition:transform .5s;}
+    .card:hover .card-media .glyph{transform:scale(1.12) rotate(-3deg);}
+    .card-media::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,transparent 45%,rgba(13,24,19,.45));}
+    .card-tag{position:absolute;top:12px;left:12px;z-index:2;font-family:var(--font-mono);font-size:.66rem;letter-spacing:.08em;text-transform:uppercase;padding:5px 11px;border-radius:100px;background:rgba(13,24,19,.7);border:1px solid var(--line);color:var(--moss);backdrop-filter:blur(5px);}
+    .card-body{padding:22px;flex:1;display:flex;flex-direction:column;}
+    .card-body h3{font-family:var(--font-body);font-weight:600;font-size:1.2rem;line-height:1.2;color:var(--cream);letter-spacing:-.01em;}
+    .card-body .meta{font-family:var(--font-mono);font-size:.72rem;color:var(--faint);margin-top:6px;}
+    .card-body p{color:var(--sand);font-size:.92rem;margin-top:12px;flex:1;}
+    .card-foot{margin-top:16px;display:flex;align-items:center;gap:7px;font-family:var(--font-mono);font-size:.78rem;color:var(--moss);transition:color .3s;}
+    .card:hover .card-foot{color:var(--moss-deep);}
+    .card-foot .arrow{transition:transform .3s;}
+    .card:hover .card-foot .arrow{transform:translateX(5px);}
+
+    /* ===== 10. TIMELINE ===== */
+    .timeline{margin-top:46px;position:relative;}
+    .timeline::before{content:"";position:absolute;left:7px;top:6px;bottom:6px;width:2px;background:linear-gradient(var(--moss),var(--sage) 60%,transparent);}
+    .tl-item{position:relative;padding-left:42px;padding-bottom:42px;}
+    .tl-item:last-child{padding-bottom:0;}
+    .tl-item::before{content:"";position:absolute;left:0;top:6px;width:16px;height:16px;border-radius:50%;background:var(--bg);border:3px solid var(--moss);box-shadow:0 0 10px rgba(127,201,154,.4);}
+    .tl-date{font-family:var(--font-mono);font-size:.76rem;color:var(--moss);letter-spacing:.06em;}
+    .tl-item h3{font-family:var(--font-display);font-weight:600;font-size:1.3rem;margin:6px 0 4px;color:var(--cream);}
+    .tl-item .org{color:var(--sand);font-size:.95rem;margin-bottom:10px;}
+    .tl-item p{color:var(--faint);font-size:.94rem;max-width:660px;}
+    /* Make each item a positioning context + leave room on the right for a logo */
+    .tl-item{padding-right:74px;}
+    /* Small, humble company logo on the right edge of each timeline item */
+    /* Header row: role title + company logo side by side */
+    .tl-head{display:flex;align-items:center;gap:14px;margin:6px 0 4px;}
+    .tl-head h3{margin:0;}
+    /* Company logo badge, sitting right of the role title */
+    .tl-logo{flex:0 0 auto;height:45px;display:flex;align-items:center;}
+    .tl-logo img{height:100%;width:auto;max-width:150px;object-fit:contain;
+      opacity:.95;transition:opacity .3s,transform .3s;}
+    .tl-item:hover .tl-logo img{opacity:1;transform:translateY(-1px);}
+    @media(max-width:560px){.tl-logo{height:30px;}}
+
+    /* ===== 11. CONTACT ===== */
+    .contact{text-align:center;}
+    .contact-card{max-width:740px;margin:38px auto 0;background:var(--surface);border:1px solid var(--line);border-radius:24px;padding:58px 40px;position:relative;overflow:hidden;box-shadow:0 22px 50px rgba(0,0,0,.3);}
+    .contact-card::before{content:"";position:absolute;width:340px;height:340px;border-radius:50%;background:radial-gradient(circle,rgba(127,201,154,0.18),transparent 70%);top:-130px;right:-120px;}
+    .contact h2{font-family:var(--font-display);font-weight:600;font-size:clamp(2rem,4.5vw,3.2rem);letter-spacing:-.02em;line-height:1.05;color:var(--cream);position:relative;}
+    .contact h2 em{font-style:italic;font-weight:500;color:var(--moss);}
+    .contact p{color:var(--sand);max-width:470px;margin:18px auto 30px;position:relative;}
+    .contact-links{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;position:relative;}
+
+    /* ===== 12. FOOTER ===== */
+    footer{border-top:1px solid var(--line);padding:36px 0;}
+    .foot-inner{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px;}
+    .foot-inner p{font-family:var(--font-mono);font-size:.8rem;color:var(--faint);}
+    .foot-links{display:flex;gap:22px;}
+    .foot-links a{font-size:.85rem;color:var(--sand);transition:color .25s;}
+    .foot-links a:hover{color:var(--moss);}
+
+/* ===== 13. MODAL ===== */
+    .modal-overlay{position:fixed;inset:0;z-index:200;background:rgba(7,14,11,0.75);backdrop-filter:blur(8px);display:none;align-items:center;justify-content:center;padding:24px;opacity:0;transition:opacity .3s;}
+    .modal-overlay.open{display:flex;opacity:1;}
+
+    /* Wider, taller modal — fills more of the screen */
+    .modal{background:var(--bg-2);border:1px solid var(--line);border-radius:20px;
+      width:min(92vw,1000px);   /* up to 1000px wide, never more than 92% of screen */
+      max-height:90vh;overflow-y:auto;
+      transform:translateY(20px) scale(.98);transition:transform .35s cubic-bezier(.16,1,.3,1);
+      position:relative;box-shadow:0 34px 80px rgba(0,0,0,.6);}
+    .modal-overlay.open .modal{transform:translateY(0) scale(1);}
+
+    /* Hero image at top — taller than before */
+    .modal-hero-img{width:100%;aspect-ratio:16/7;object-fit:cover;display:block;border-radius:20px 20px 0 0;}
+    .modal-hero-img.is-gif{object-fit:contain;background:var(--surface);}
+
+    /* Gradient fallback when no image */
+    .modal-media{aspect-ratio:16/7;display:grid;place-items:center;background-size:cover;background-position:center;position:relative;border-radius:20px 20px 0 0;}
+    .modal-media .glyph{font-size:3.8rem;}
+
+    /* Close button */
+    .modal-close{position:absolute;top:16px;right:16px;z-index:3;width:40px;height:40px;border-radius:50%;border:1px solid var(--line);background:rgba(13,24,19,.8);color:var(--cream);cursor:pointer;font-size:1.1rem;transition:.25s;display:grid;place-items:center;}
+    .modal-close:hover{background:var(--moss);color:var(--ink);}
+
+    /* Content area */
+    .modal-content{padding:34px 38px 40px;}
+    .modal-content .meta{font-family:var(--font-mono);font-size:.76rem;color:var(--moss);letter-spacing:.06em;}
+    .modal-content h3{font-family:var(--font-display);font-weight:600;font-size:clamp(1.5rem,3vw,2.1rem);margin:10px 0 20px;line-height:1.15;color:var(--cream);}
+    .modal-content p{color:var(--sand);margin-bottom:16px;font-size:1rem;line-height:1.7;}
+    .modal-h{font-family:var(--font-display);font-weight:600;font-size:1.15rem;color:var(--moss);margin:30px 0 8px;letter-spacing:-.01em;}
+    .modal-fig{margin:22px 0;}
+    .modal-fig img{width:100%;border-radius:10px;border:1px solid var(--line);display:block;}
+    .modal-fig figcaption{font-family:var(--font-mono);font-size:.74rem;color:var(--faint);margin-top:8px;line-height:1.5;}
+    .modal-pair{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:22px 0;}
+    .modal-pair .modal-fig{margin:0;}
+    @media(max-width:640px){.modal-pair{grid-template-columns:1fr;}}
+
+    /* Extra images grid inside the modal */
+    .modal-img-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin:24px 0;}
+    .modal-img-grid img{width:100%;border-radius:10px;object-fit:cover;aspect-ratio:4/3;border:1px solid var(--line);}
+
+    /* Tags row */
+    .modal-tags{display:flex;flex-wrap:wrap;gap:8px;margin-top:24px;}
+
+    /* Report / PDF link — styled as a subtle button */
+    .modal-report{display:inline-flex;align-items:center;gap:10px;margin-top:20px;padding:11px 22px;border-radius:100px;border:1px solid var(--moss);color:var(--moss);font-family:var(--font-mono);font-size:.85rem;transition:.3s;}
+    .modal-report:hover{background:var(--moss);color:var(--ink);}
+    .modal-link{display:inline-flex;align-items:center;gap:8px;margin-top:12px;font-family:var(--font-mono);font-size:.82rem;color:var(--faint);transition:color .25s;}
+    .modal-link:hover{color:var(--moss);}
+
+    @media(max-width:640px){
+      .modal-content{padding:24px 22px 30px;}
+      .modal-img-grid{grid-template-columns:1fr;}
+    }
+
+    /* ===== 14. RESPONSIVE ===== */
+    @media (max-width:900px){
+      .hero-grid{grid-template-columns:1fr;gap:36px;}
+      .hero-side{margin-top:0;}
+      .about-grid{grid-template-columns:1fr;gap:36px;}
+      .proj-grid{grid-template-columns:repeat(2,1fr);}
+      .stats{grid-template-columns:repeat(2,1fr);row-gap:28px;}
+      section{padding:42px 0;}
+      .nav-links{display:none;position:absolute;top:100%;left:0;right:0;flex-direction:column;background:rgba(20,36,28,0.97);padding:24px 28px;gap:18px;border-bottom:1px solid var(--line);}
+      .nav-links.open{display:flex;}
+      .nav-toggle{display:flex;}
+    }
+    @media (max-width:560px){
+      .proj-grid{grid-template-columns:1fr;}
+      .wrap{padding:0 20px;}
+      .nav-inner{padding:14px 20px;}
+      .brand-text .sub{display:none;}
+      .contact-card{padding:42px 24px;}
+    }
+    @media (prefers-reduced-motion:reduce){
+      *,*::before,*::after{animation:none!important;transition:none!important;}
+      .reveal{opacity:1;transform:none;}
+    }
+  </style>
+</head>
+
+<body>
+  <div class="bg-layer" aria-hidden="true"></div>
+  <div class="bg-grid" aria-hidden="true"></div>
+
+  <!-- ===== NAVIGATION ===== -->
+  <header class="nav" id="nav">
+    <div class="nav-inner">
+      <div class="brand">
+        <!-- DARTMOUTH LOGO: replace src with your logo file (e.g. "dartmouth.png")
+             or a URL. If it fails to load, the green "D" fallback shows instead. -->
+        <img class="brand-logo" src="thayer.png" alt="Dartmouth College"
+             onerror="this.style.display='none';this.nextElementSibling.style.display='grid';" />
+        <span class="brand-logo-fallback">D</span>
+        <span class="brand-text">
+          <span class="name">Martin C. Skacel '27</span>
+          <span class="sub">Student Portfolio</span>
+        </span>
+      </div>
+      <nav class="nav-links" id="navLinks">
+        <a href="#about">About</a>
+        <a href="#projects">Projects</a>
+        <a href="#experience">Experience</a>
+        <a href="#contact" class="nav-cta">Contact</a>
+      </nav>
+      <button class="nav-toggle" id="navToggle" aria-label="Menu"><span></span><span></span><span></span></button>
+    </div>
+  </header>
+
+  <!-- ===== HERO ===== -->
+  <section class="hero" id="top">
+    <div class="wrap">
+      <div class="hero-grid">
+        <div>
+          <h1>
+            <span class="line"><span>Martin Skacel</span></span>
+          </h1>
+          <p class="name-sub">Project Portfolio</p>
+          <p class="hero-sub">
+            I'm a <strong>mechanical and energy engineering </strong> student at Dartmouth, modified with Earth sciences. I&rsquo;m interested in <strong>energy, climate, and sustainability</strong>,
+            and how we can use these to solve anthropogenic climate change. This site acts as a collection of my
+            projects, coursework, and field work.
+          </p>
+          <div class="hero-actions">
+            <a href="#projects" class="btn btn-primary">See my projects</a>
+            <a href="#contact" class="btn btn-ghost">Contact me</a>
+          </div>
+          <div class="affil">
+            <div class="affil-items">
+              <span class="affil-item">
+                <img src="thayer.png" alt="" onerror="this.style.display='none'" />
+                Thayer School of Engineering
+              </span>
+              </span>
+              <span class="affil-item">
+                <img src="logo-dtu.png" alt="" onerror="this.style.display='none'" />
+                Technical University of Denmark
+              </span>
+            </div>
+          </div>
+        </div>
+
+<!-- RIGHT COLUMN: four scattered floating images.
+             Slot 1 (top-left) = framed GIF. Slots 2-4 = floating PNGs. -->
+        <div class="hero-side">
+          <div class="hero-scatter">
+            <!-- TOP-LEFT: the GIF (keeps its frame) -->
+            <div class="shot shot-gif pos1">
+              <img src="hero.gif" alt="" /> 
+            </div>
+            <!-- TOP-RIGHT: floating PNG -->
+            <div class="shot float pos2">
+              <img src="project1.png" alt="" />
+            </div>
+            <!-- BOTTOM-LEFT: floating PNG -->
+            <div class="shot float pos3">
+              <img src="project2.png" alt="" />
+            </div>
+            <!-- BOTTOM-RIGHT: floating PNG -->
+            <div class="shot float pos4">
+              <img src="project3.png" alt="" />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== PROJECTS ===== -->
+  <section id="projects">
+    <div class="wrap">
+      <div class="reveal"><span class="eyebrow">Selected Work</span></div>
+      <h2 class="section-title reveal">Projects + research :</h2>
+      <div class="proj-grid" id="projGrid"></div>
+    </div>
+  </section>
+
+  <!-- ===== ABOUT ===== -->
+  <section id="about">
+    <div class="wrap">
+      <div class="reveal"><span class="eyebrow">About</span></div>
+      <h2 class="section-title about-title reveal">Mechanical Engineering + Energy + Earth Sciences</h2>
+      <div class="about-grid">
+        <div class="about-photo reveal"><img src="martin.jpeg" alt="Martin Skacel" /></div>
+        <div class="about-body reveal" data-delay="1">
+          <p>I grew up in northern Maine, in the (often) cold but beautiful seasons of New England, which sparked my interest in nature and the environment.
+            That led me to Dartmouth, where I've pursued each and every experience I can in energy and sustainability.
+
+          <p>I learn best by doing, such as machining parts in the Machine shop, testing
+            materials, mapping in the field, or modeling energy systems. I&rsquo;m
+            always excited to learn something new.</p>
+          <div class="skills-label">Skills:</div>
+          <div class="pill-row">
+            <span class="pill">SolidWorks</span>
+            <span class="pill">NX</span>
+            <span class="pill">ARAS Innovator (PDM)</span>
+            <span class="pill">AutoCAD</span>
+            <span class="pill">SAP2000</span>
+            <span class="pill">MATLAB</span>
+            <span class="pill">SAM</span>
+            <span class="pill">PVGIS</span>
+            <span class="pill">HEC-RAS</span>
+            <span class="pill">QGIS</span>
+            <span class="pill">Arduino</span>
+            <span class="pill">Excel</span>
+            <span class="pill">CNC Mill &amp; Lathe</span>
+            <span class="pill">3D Printing</span>
+            <span class="pill">Casting</span>
+            <span class="pill">SEM / Microscopy</span>
+            <span class="pill">Instron Testing</span>
+            <span class="pill">Energy Systems Analysis</span>
+            <span class="pill">Structural Analysis</span>
+            <span class="pill">PV System Design</span>
+            <span class="pill">Geologic Mapping &amp; Field Methods</span>
+          </div>
+          <div class="honors">
+            <div class="skills-label">Honors:</div>
+            <ul class="honors-list">
+              <li>Rufus Choate Scholar <span>&middot; top 5% of class, 2023&ndash;2026</span></li>
+              <li>Phi Beta Kappa Sophomore Award</li>
+              <li>Jackson Prize <span>&middot; best engineering project</span></li>
+              <li>Estwing Prize <span>&middot; field work, The Stretch</span></li>
+              <li>National Merit Scholar</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== EXPERIENCE (edit items here) ===== -->
+  <section id="experience">
+    <div class="wrap">
+      <div class="reveal"><span class="eyebrow">Experience</span></div>
+      <h2 class="section-title reveal">Experience &amp; Field Work:</h2>
+      <div class="timeline">
+        <div class="tl-item reveal" data-delay="2">
+          <div class="tl-date">JUN 2026 &mdash; PRESENT</div>
+          <div class="tl-head">
+            <h3>Mechanical Engineering Intern</h3>
+            <span class="tl-logo"><img src="logo-heirloom.png" alt="Heirloom Carbon" onerror="this.parentElement.style.display='none'"/></span>
+          </div>
+          <div class="org">Heirloom Carbon &middot; San Francisco, CA</div>
+          <p>Joining Heirloom's mechanical team to support the design, build, and
+             deployment of their direct air capture systems. Refining and drafting
+             mechanical components in SolidWorks with a focus on improving system
+             efficiency and driving down the cost per ton of CO2 captured.</p>
+        </div>
+        <div class="tl-item reveal" data-delay="1">
+          <div class="tl-date">JAN &mdash; JUN 2026</div>
+          <div class="tl-head">
+            <h3>Energy Engineering Exchange: Denmark</h3>
+            <span class="tl-logo"><img src="logo-dtu.png" alt="DTU" onerror="this.parentElement.style.display='none'"/></span>
+          </div>
+          <div class="org">Technical University of Denmark (DTU) &middot; Copenhagen, Denmark</div>
+          <p>Studied energy system analysis, renewable generation, carbon capture, sustainable design,
+             hydrogen energy, and photovoltaics as part of an energy engineering exchange program.</p>
+        </div>
+        <div class="tl-item reveal">
+          <div class="tl-date">NOV 2025 &mdash; JAN 2026 </div>
+          <div class="tl-head">
+            <h3>Mechanical Engineering Intern </h3>
+            <span class="tl-logo"><img src="logo-hypertherm.png" alt="Hypertherm" onerror="this.parentElement.style.display='none'"/></span>
+          </div>
+          <div class="org">Hypertherm Associates &middot; Lebanon, NH</div>
+          <p>Resolved critical engineering issues in prototype and post-release plasma cutting designs.
+             Performed technical evaluations, CAD redesigns, and experimental trials to improve
+             equipment reliability and efficiency, working in SolidWorks, ARAS Innovator (PDM),
+             AutoCAD, MATLAB, and Excel.</p>
+        </div>
+        <div class="tl-item reveal" data-delay="2">
+          <div class="tl-date">AUG &mdash; NOV 2025</div>
+          <div class="tl-head">
+            <h3>The Stretch &mdash; Earth Sciences Field Research Program</h3>
+            <span class="tl-logo"><img src="logo-dartmouthh.png" alt="Dartmouth" onerror="this.parentElement.style.display='none'"/></span>
+          </div>
+          <div class="org">Dartmouth &middot; Banff, Canada to Death Valley, CA</div>
+          <p>2.5 months traversing the American West conducting geotechnical field research,
+             geological mapping, and environmental analysis: from glacial monitoring to
+             structural mapping and water-infrastructure study.</p>
+        </div>
+        <div class="tl-item reveal" data-delay="2">
+          <div class="tl-date">DEC 2024 &mdash; PRESENT</div>
+          <div class="tl-head">
+            <h3>Student Shop Operator</h3>
+            <span class="tl-logo"><img src="thayer.png" alt="Thayer School of Engineering" onerror="this.parentElement.style.display='none'"/></span>
+          </div>
+          <div class="org">Thayer Machine Shop &middot; Hanover, NH</div>
+          <p>Trained to operate CNC mills, lathes, laser cutters, 3D printers, and casting equipment,
+             and to help other engineering students move from idea to design to finished product:
+             teaching CAD, prototyping, and machining.</p>
+        </div>
+        <div class="tl-item reveal" data-delay="2">
+          <div class="tl-date">NOV 2024 &mdash; JAN 2025</div>
+          <h3>Student Solar Energy Intern</h3>
+          <div class="org">DIY Solar Maine &middot; Bangor, ME</div>
+          <p>Supported a small solar business in northern Maine, shadowing site evaluations and
+             construction projects, providing basic technical assistance, and learning about solar
+             energy in rural, climate-impacted communities.</p>
+        </div>
+        <div class="tl-item reveal" data-delay="2">
+          <div class="tl-date">MAY &mdash; AUG 2024</div>
+          <div class="tl-head">
+            <h3>Materials Research Intern</h3>
+            <span class="tl-logo"><img src="logo-umaine.png" alt="UMaine" onerror="this.parentElement.style.display='none'"/></span>
+          </div>
+          <div class="org">UMaine Civil &amp; Environmental Engineering &middot; Orono, ME</div>
+          <p>Conducted materials testing on wood under varying environmental conditions &mdash; short-term,
+             high-speed, stress-tension, and micro-creep testing &mdash; using Instron software and
+             environmental chambers. Trained on bandsaw, lathe, table saw, and disc sander.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== CONTACT ===== -->
+  <section id="contact" class="contact">
+    <div class="wrap">
+      <div class="contact-card reveal">
+        <div class="eyebrow" style="justify-content:center">Reach out</div>
+        <h2>Contact:</h2>
+        <p>
+To get in touch with me, please send me an email at martin.c.skacel.27@dartmouth.edu, or connect with me on Linkedin. I'm always excited about new opportunities!</p>
+        <div class="contact-links">
+          <a href="mailto:martin.c.skacel.27@dartmouth.edu" class="btn btn-primary">&#9993; Email me</a>
+          <a href="https://www.linkedin.com/in/martin-skacel-6baa54276/" target="_blank" rel="noopener" class="btn btn-ghost">LinkedIn</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== FOOTER ===== -->
+  <footer>
+    <div class="wrap foot-inner">
+      <p>&copy; <span id="year"></span> Martin C. Skacel '27 &middot; Student Portfolio</p>
+      <div class="foot-links">
+        <a href="mailto:martin.c.skacel.27@dartmouth.edu">Email</a>
+        <a href="https://www.linkedin.com/in/martin-skacel-6baa54276/" target="_blank" rel="noopener">LinkedIn</a>
+        <a href="https://journeys.dartmouth.edu/martincskacel27/" target="_blank" rel="noopener">Dartmouth Journeys</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ===== MODAL ===== -->
+  <div class="modal-overlay" id="modalOverlay">
+    <div class="modal" role="dialog" aria-modal="true">
+      <div class="modal-media" id="modalMedia"><span class="glyph" id="modalGlyph"></span></div>
+      <button class="modal-close" id="modalClose" aria-label="Close">&#10005;</button>
+      <div class="modal-content">
+        <div class="meta" id="modalMeta"></div>
+        <h3 id="modalTitle"></h3>
+        <div id="modalBody"></div>
+        <div class="modal-tags" id="modalTags"></div>
+        <a class="modal-link" id="modalLink" target="_blank" rel="noopener" style="display:none">View full write-up &rarr;</a>
+      </div>
+    </div>
+  </div>
+
+  <script>
+  /* ===== PROJECT DATA (edit your projects here) =====
+     Fields: title, meta, category, glyph, gradient, blurb,
+             detail[], tags[], image (optional), link (optional) */
+  const PROJECTS = [
+    {
+      title:"Fully Modeling a Solar System for a Family in Spain",
+      meta:"PV Systems \u00b7 Spring 2026 \u00b7 Denmark Technical University",
+      category:"Engineering and Sustainability",
+      glyph:"\uD83C\uDF0A",
+      gradient:"linear-gradient(140deg,#24463a,#172c23)",
+      image:"pv-thumbnail.png",
+      blurb:"For 34552 Photovoltaic Systems at Denmark Technical, we were required to fully model and pitch a residential solar system, start to finish: including PV design, purchase, and installation. We then sent the report to the homeowner.",
+      content:[
+        {type:"p",text:"<div style='display:flex;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:8px'><strong style='color:var(--moss)'>Skills:</strong><span class='pill'>PV System Design</span><span class='pill'>SAM</span><span class='pill'>PVGIS</span><span class='pill'>Energy Yield Modeling</span><span class='pill'>Solar Resource Analysis</span></div>"},
+        {type:"p",text:"A full residential solar design for a real two-story house in Moralzarzal, Madrid, taken start to finish: solar resource, system sizing, component selection, and performance modeling.<br>\u2022 Estimated real annual household demand (1,471.81 kWh/yr) from actual electricity bills rather than national averages<br>\u2022 Pulled the site solar resource from PVGIS and built a 3D shading model in SAM to capture month-by-hour losses<br>\u2022 Sized the array to a 40% solar-supply target, selecting real panels, mounting, and a compatible inverter<br>\u2022 Ran a full SAM performance simulation, validating yield, performance ratio, and loss factors against published Spanish PV data"},
+        {type:"p",text:"This project, for <em>34552 Photovoltaic Systems</em> at the Technical University of Denmark (DTU), required us to fully design and pitch a residential solar system for a real home, then deliver the report to the homeowner. The house sits in Moralzarzal, in the Sierra de Madrid, a region with a strong solar resource that makes it well-suited for PV."},
+        {type:"img",src:"insol.jpeg",caption:"Calculation of monthly solar insolation at the location using PVGIS."},
+        {type:"h",text:"Establishing the solar resource and demand"},
+        {type:"p",text:"We first estimated the home's real annual electricity demand at 1,471.81 kWh/yr by combining the actual bills for both floors, which gave a far more reliable basis than national averages. The consumption showed a clear seasonal pattern: low through most of the year and peaking in July and August, since the house is used as a seasonal second residence. We then pulled the site's solar resource from PVGIS using the SARAH3 database, giving an annual horizontal insolation of roughly 1,715 kWh/m\u00b2/yr with the expected summer-high, winter-low trend for central Spain."},
+        {type:"h",text:"Modeling shading and orientation"},
+        {type:"p",text:"The roof is tiled with a 15.8\u00b0 tilt, so we placed the array on the south-southeast face (heading ~156\u00b0) where shading was minimal. I built a 3D shade model in SAM to capture the surrounding terrain and obstructions, producing a month-by-hour beam-irradiance shading table and an annual shading factor of 0.9892, which then fed directly into the sizing calculations."},
+        {type:"img",src:"3dmodel.jpeg",caption:"An image of the 3D model I built in SAM of the property."},
+        {type:"h",text:"Sizing the system and selecting components"},
+        {type:"p",text:"We set a target solar-supply ratio of 40%, sizing the array to cover 40% of annual consumption. Working from the PVGIS yield and an assumed self-consumption ratio, this gave a required DC capacity of about 1.14 kWp. We then selected real, commercially available hardware: four 300 W LG MonoX Plus modules (1.20 kWp total) on an Ennova coplanar tile-roof mounting system, with a Huawei SUN2000-2KTL-L1 single-phase inverter."},
+        {type:"img",src:"panelinv.jpeg",caption:"Calculations and selection of a suitable inverter for our array."},
+        {type:"h",text:"Verifying electrical compatibility"},
+        {type:"p",text:"I worked through the full electrical match between the array and inverter across the expected temperature extremes for the site (\u22127\u00b0C to 80\u00b0C module temperature). Checking the 4-series, 1-parallel string against the inverter's voltage, current, and MPPT windows confirmed that open-circuit voltage, short-circuit current, and operating voltages all stayed safely within the Huawei inverter's limits, so the array is electrically compatible and will start and operate correctly year-round."},
+        {type:"h",text:"Performance modeling and validation"},
+        {type:"p",text:"With the design finalized, I ran a full SAM performance simulation. The system produces ~1,827 kWh of AC electricity per year from the 1.20 kWp array, for a final yield of ~1,522 kWh/kWp, slightly above the ~1,450 kWh/kWp commonly reported for fixed-tilt systems in Spain. The annual performance ratio came out to 85.5% with a capacity factor of 18.3%, both within the published range for Spanish residential rooftop PV."},
+        {type:"p",text:"The seasonal behavior validated the model: performance ratio peaked in winter (~91\u201393%) and dipped in summer (~81\u201383%), exactly as expected given the LG module's \u22120.41%/\u00b0C temperature coefficient and central Spain's summer heat. A SAM loss-diagram analysis traced the main losses to module deviation from STC, inverter efficiency, and soiling, all consistent with literature for comparable Mediterranean systems."},
+        {type:"h",text:"Financial overview"},
+        {type:"p",text:"Finally, we carried the design into a financial analysis in SAM using Spain's self-consumption-with-surplus billing scheme, building out the full cost structure (equipment, balance-of-system, labor, and operating costs) and modeling savings against current Spanish electricity prices. The system delivers meaningful annual bill savings, though the economics are constrained mainly by the home's low seasonal demand: a strong solar resource and good technical performance, but limited grid electricity to offset on a second residence used only part of the year."},
+        {type:"p",text:"Overall, the project ran the complete residential PV workflow, from real consumption data and solar resource through component selection, electrical verification, performance modeling, and financial evaluation, with results validated against published Spanish PV performance data at each step."}
+      ],
+      tags:["PV System Design","SAM","PVGIS","Energy Yield Modeling","Solar Resource Analysis","Inverter Matching"],
+      report:"https://drive.google.com/file/d/1sYbnuRfiDHvpiXxRkT1H-ejqYMzBknod/view?usp=sharing",
+      link:"https://journeys.dartmouth.edu/martincskacel27/"
+    },
+    {
+      title:"Industrial Flood Risk Modeling at Local Companies",
+      meta:"EARS 80 \u00b7 Spring 2025 \u00b7 Climate Resilience",
+      category:"Climate & Earth",
+      glyph:"\uD83C\uDF0A",
+      gradient:"linear-gradient(140deg,#24463a,#172c23)",
+      image:"hero.gif",
+      blurb:"<strong class='award' style='color:var(--moss)'>Presented to Dartmouth's President: </strong>A two-term collaboration with a local company, fully modeling climate-driven flood risk with HEC-RAS at their facility.",
+      content:[
+        {type:"p",text:"<div style='display:flex;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:8px'><strong style='color:var(--moss)'>Skills:</strong><span class='pill'>HEC-RAS</span><span class='pill'>Hydraulic Modeling</span><span class='pill'>Flood Risk</span><span class='pill'>Climate Resilience</span><span class='pill'>Fieldwork</span></div>"},
+        {type:"p",text:"A two-term collaboration with Hypertherm's sustainability team assessing climate-driven flood risk at a facility sitting directly on Mink Brook.<br>\u2022 Assessed all current flood maps and modeling resources in New Hampshire, determining they are largely out of date. <br>\u2022 Measured channel geometry in the field, water depths, and floodplain shape <br>\u2022 Fully built a HEC-RAS hydraulic model simulating 100-year and 500-year floods (see above gif) under modern climate conditions<br>\u2022 Identified the upstream bridge as the dominant flood driver and delivered prioritized site recommendations"},
+        {type:"p",text:"This project was a two-term collaboration with Hypertherm's sustainability team to assess climate-driven flood risk at their Great Hollow Road facility, which sits directly on Mink Brook. The most recent FEMA flood map available dated to 2008, so it was clear we had to build our own model."},
+        {type:"img",src:"https://journeys.dartmouth.edu/martincskacel27/files/2025/11/image.png"},
+        {type:"p",text:"We measured channel geometry, water depths, and floodplain shape in the field, then I built a hydraulic model in HEC-RAS to simulate 100-year and 500-year floods under modern climate conditions."},
+        {type:"img",src:"https://journeys.dartmouth.edu/martincskacel27/files/2025/11/velocity-vectors.gif"},
+        {type:"p",text:"The key finding was the upstream Stone Arch Bridge. When partially blocked by debris, it acts as a bottleneck, accelerating water and directing it at and around the building. I modeled a \u201cno bridge\u201d scenario, which dropped flood risk sharply, verifying our theory that the bridge is the single greatest determinant of flood behavior at the site."},
+        {type:"p",text:"<strong>1. The bridge is the single greatest determinant of flood behavior at this location.</strong><br><strong>2. Monitoring and/or redesigning the bridge is the top priority, especially if it were to clog.</strong>"},
+        {type:"imgpair",src1:"https://journeys.dartmouth.edu/martincskacel27/files/2025/11/500yr-blocked-bridge-2-1024x939.png",cap1:"",src2:"https://journeys.dartmouth.edu/martincskacel27/files/2025/11/500yr-no-bridge-4-1024x939.png",cap2:""},
+        {type:"p",text:"Above you can see: <em>With</em> bridge scenario (left) and <em>without</em> bridge scenario (right). Removing the bridge eliminated much of the flood risk at the property."},
+        {type:"p",text:"Modeling also showed the floodplain behind the building stores significant water volume during high-flow events, reducing impacts on Hypertherm and downstream properties, making floodplain preservation a priority."},
+        {type:"h",text:"Our final recommendations included:"},
+        {type:"p",text:"\u2022 Monitoring and replacing the Stone Arch Bridge in coordination with the town and state<br>\u2022 Improving drainage along the existing ditch at the east side of the facility<br>\u2022 Restoring the floodplain with native plants that enhance water retention<br>\u2022 Partnering with the Upper Valley Apple Corps to bring community stewardship and ecological restoration together in this area"},
+        {type:"p",text:"We presented these final findings to Hypertherm's executive leadership, provided the full report, and worked with them to discuss solutions moving forward. Thank you to Robin Tindall and Alex Jaccaci (our partners at Hypertherm) for all of the support on this project."}
+      ],
+      tags:["HEC-RAS","Hydraulic Modeling","Flood Risk","Climate Resilience","Fieldwork"],
+      report:"https://drive.google.com/file/d/1sYbnuRfiDHvpiXxRkT1H-ejqYMzBknod/view?usp=sharing",
+      link:"https://journeys.dartmouth.edu/martincskacel27/modern-flood-risk-and-solutions-at-industrial-facilities/"
+    },
+    {
+      title:"Achieving Eutectic in Aluminum\u2013Silicon Alloys",
+      meta:"ENGS 24 \u00b7 Summer 2025 \u00b7 Science of Materials",
+      category:"Engineering",
+      glyph:"\u2697\uFE0F",
+      gradient:"linear-gradient(140deg,#3a402a,#23281b)",
+      image:"oven.gif",
+      blurb:"<strong class='award' style='color:var(--moss)'>Best Overall Scientific Report, Summer 2025:</strong> Cast and characterized ~30 new aluminum\u2013silicon alloys, producing distinct dendritic-to-eutectic microstructure transitions.",
+      content:[
+        {type:"p",text:"<strong class='award' style='color:var(--moss)'>Best Overall Scientific Report, Summer 2025</strong>: <em>Achieving Eutectic in Al-Si Alloys</em>"},
+        {type:"p",text:"<div style='display:flex;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:8px'><strong style='color:var(--moss)'>Skills:</strong><span class='pill'>Sand Casting</span><span class='pill'>Metallography</span><span class='pill'>SEM</span><span class='pill'>Microscopy</span></div>"},
+        {type:"p",text:"An ENGS 24 project testing whether the eutectic composition and microstructure could be reached in Al\u2013Si samples with a novel sand-casting setup.<br>\u2022 Cast nearly 30 alloys across 0 to 25 wt% Si by melting Al-6061 and adding silicon<br>\u2022 Prepared, polished, and etched thin sections, and conducted optical and SEM analysis<br>\u2022 Captured the full dendritic-to-eutectic microstructure transition and linked it to hardness"},
+        {type:"p",text:"This project for <em>ENGS 24: Science of Materials</em> tested whether the eutectic composition and microstructure could be reached in Al\u2013Si samples using a novel sand-casting setup new to the Thayer School of Engineering. We cast nearly 30 alloys by melting Al-6061 and adding silicon across 0 to 25 wt% Si, poured into independent sand molds, then polished and etched thin sections for analysis on a Keyence optical microscope and a Tescan SEM."},
+        {type:"imgpair",src1:"https://journeys.dartmouth.edu/martincskacel27/files/2025/11/Screenshot-2025-11-25-at-3.32.03-PM-1-1024x716.png",cap1:"",src2:"https://journeys.dartmouth.edu/martincskacel27/files/2025/11/Screenshot-2025-11-25-at-3.32.11-PM-1-1024x780.png",cap2:""},
+        {type:"img",src:"https://journeys.dartmouth.edu/martincskacel27/files/2025/11/Screenshot-2025-11-25-at-3.32.31-PM-3-1024x367.png"},
+        {type:"p",text:"<strong>Microstructure changed sharply across compositions.</strong> Low-Si samples showed large aluminum dendrites. With more silicon, the dendrites grew more defined and increasingly surrounded by Si-rich eutectic. At the eutectic composition (~12.6 wt% Si), the structure became almost fully eutectic: fine, lamellar, and nearly dendrite-free."},
+        {type:"imgpair",src1:"https://journeys.dartmouth.edu/martincskacel27/files/2025/11/Screenshot-2025-11-25-at-3.39.37-PM-1024x650.png",cap1:"",src2:"https://journeys.dartmouth.edu/martincskacel27/files/2025/11/Screenshot-2025-11-25-at-3.39.51-PM-1024x723.png",cap2:""},
+        {type:"imgpair",src1:"https://journeys.dartmouth.edu/martincskacel27/files/2025/11/Screenshot-2025-11-25-at-3.40.01-PM-1024x727.png",cap1:"",src2:"https://journeys.dartmouth.edu/martincskacel27/files/2025/11/Screenshot-2025-11-25-at-3.40.13-PM-1024x789.png",cap2:""},
+        {type:"p",text:"Above the eutectic, primary silicon crystals appeared: sharp geometric plates at 13\u201315% Si, and large star-shaped structures at 25%."},
+        {type:"imgpair",src1:"https://journeys.dartmouth.edu/martincskacel27/files/2025/11/Screenshot-2025-11-25-at-3.41.34-PM-1024x768.png",cap1:"",src2:"https://journeys.dartmouth.edu/martincskacel27/files/2025/11/Screenshot-2025-11-25-at-3.41.41-PM-1024x771.png",cap2:""},
+        {type:"img",src:"https://journeys.dartmouth.edu/martincskacel27/files/2025/11/Screenshot-2025-11-25-at-3.42.26-PM-1024x707.png"},
+        {type:"p",text:"A slow-cooling test, leaving one alloy to solidify overnight in the furnace, produced a near-eutectic structure with few dendrites, matching solidification theory. The sample also showed a cooling gradient: more eutectic at the center, more dendrites at the air-contact fronts."},
+        {type:"img",src:"https://journeys.dartmouth.edu/martincskacel27/files/2025/11/Screenshot-2025-11-25-at-3.43.35-PM-1024x443.png"},
+        {type:"p",text:"<strong>Hardness rose with Si content and peaked near the eutectic composition</strong>, where the fine interconnected structure best resists deformation. Equipment issues (blue data points) limited the final hardness data, but the microstructure confirmed the trend."},
+        {type:"img",src:"https://journeys.dartmouth.edu/martincskacel27/files/2025/11/Screenshot-2025-11-25-at-3.47.20-PM-1024x747.png"},
+        {type:"p",text:"Thank you to Dr. Daniel Cullen for advising this project."}
+      ],
+      tags:["Sand Casting","Metallography","SEM","Microscopy"],
+      report:"https://drive.google.com/file/d/1CQNmWUUeZzGkIaO6_uLckgr1sR5wfuFH/view?usp=sharing",
+      link:"https://journeys.dartmouth.edu/martincskacel27/achieving-eutectic-in-aluminum-silicon-alloys/"
+    },
+    {
+      title:"Mechanics Bridge Competition: Best Bridge Award",
+      meta:"ENGS 33 \u00b7 Winter 2025 \u00b7 Solid Mechanics",
+      category:"Engineering",
+      glyph:"\uD83C\uDF09",
+      gradient:"linear-gradient(140deg,#28473a,#172c23)",
+      image:"https://journeys.dartmouth.edu/martincskacel27/files/2025/04/IMG_4865-1024x768.jpeg",
+      blurb:"<strong class='award' style='color:var(--moss)'>Best Bridge Award, Winter 2025:</strong> Designed, built, and tested a scale-model truss bridge, earning the Best Bridge Award in the course.",
+      content:[
+        {type:"p",text:"<strong class='award' style='color:var(--moss)'>Best Bridge Award, Winter 2025</strong>: <em>IN GOD WE TRUSS</em>"},
+        {type:"p",text:"<div style='display:flex;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:8px'><strong style='color:var(--moss)'>Skills:</strong><span class='pill'>SAP2000</span><span class='pill'>SolidWorks</span><span class='pill'>Structural Analysis</span><span class='pill'>Statics</span></div>"},
+        {type:"p",text:"An ENGS 33 challenge to design, build, and test a scale-model truss bridge, which won the course's Best Bridge Award.<br>\u2022 Designed a full scale-model truss for material and strength efficiency<br>\u2022 Analyzed member forces in SAP2000 and ran stress and buckling simulations in SolidWorks<br>\u2022 Physically built the bridge from only birch plywood and wood glue<br>\u2022 Optimized for strength per unit mass and minimal deflection under load"},
+        {type:"p",text:"In <em>ENGS 33: Statics and Mechanics</em>, we were challenged to design, build, and test a functional scale-model truss bridge, applying static equilibrium, structural analysis, and material mechanics."},
+        {type:"img",src:"https://journeys.dartmouth.edu/martincskacel27/files/2025/04/IMG_4843-edited.jpeg"},
+        {type:"imgpair",src1:"https://journeys.dartmouth.edu/martincskacel27/files/2025/04/IMG_4747-1-768x1024.jpeg",cap1:"",src2:"https://journeys.dartmouth.edu/martincskacel27/files/2025/04/IMG_4865-1024x768.jpeg",cap2:""},
+        {type:"imgpair",src1:"https://journeys.dartmouth.edu/martincskacel27/files/2025/04/IMG_4867-1024x768.jpeg",cap1:"",src2:"https://journeys.dartmouth.edu/martincskacel27/files/2025/04/IMG_4874-1024x768.jpeg",cap2:""},
+        {type:"img",src:"https://journeys.dartmouth.edu/martincskacel27/files/2025/04/IMG_4679.gif",caption:"Our final bridge design used for testing."},
+        {type:"p",text:"We built the bridge from only birch plywood and wood glue, using SAP2000 for force analysis and SolidWorks for 3D modeling and stress and buckling simulations, optimizing for strength: per unit mass and minimal deflection under load."},
+        {type:"h",text:"SOLIDWORKS Deflection (left) and Stress Simulations (right):"},
+        {type:"imgpair",src1:"https://journeys.dartmouth.edu/martincskacel27/files/2025/04/Screenshot-2025-04-22-at-4.37.15-PM-2-1024x758.png",cap1:"",src2:"https://journeys.dartmouth.edu/martincskacel27/files/2025/04/Screenshot-2025-04-22-at-4.37.03-PM-2-1024x745.png",cap2:""}
+      ],
+      tags:["SAP2000","SolidWorks","Structural Analysis","Statics"],
+      link:"https://journeys.dartmouth.edu/martincskacel27/mechanics-bridge-competition-best-bridge-award/"
+    },
+    {
+      title:"Smart Sort: A Better Way to Recycle on Campus",
+      meta:"ENGS 21 \u00b7 Spring 2024 \u00b7 Intro to Engineering",
+      category:"Sustainability",
+      glyph:"\u267B\uFE0F",
+      gradient:"linear-gradient(140deg,#27463a,#172c23)",
+      image:"ss_team.jpeg",
+      blurb:"<strong class='award' style='color:var(--moss)'>Best Project Award (Jackson Prize):</strong> A trashcan-integrated device that automatically sorts empty aluminum cans out of contaminated waste.",
+      content:[
+        {type:"p",text:"<div style='display:flex;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:8px'><strong style='color:var(--moss)'>Skills:</strong><span class='pill'>Product Design</span><span class='pill'>Arduino</span><span class='pill'>Sensors</span><span class='pill'>Mechanical Design</span><span class='pill'>Iterative Testing</span><span class='pill'>Sustainability</span></div>"},
+        {type:"p",text:"<strong class='award' style='color:var(--moss)'>Best Project Award (Jackson Prize):</strong> A trashcan-integrated device that automatically sorts empty aluminum cans out of contaminated waste:<br>\u2022 Identified the frequent contamination of recyclable waste on campus, and the need for sorting. <br>\u2022 Designed a two-sensor (weight + inductance) sorting machine logic design and a single servo-driven door<br>\u2022 Prototyped and mechanically designed the sorting mechanism in CAD and 3D printing<br>\u2022 Ran four rounds of live field testing, reaching 94.4% sorting accuracy and a 98% pure can stream"},
+        {type:"video",id:"05FzwmeYoEE",caption:"Smart Sort in action: sensing, sorting, and an inside view of the mechanism."},
+        {type:"h",text:"The problem"},
+        {type:"img",src:"ss_waste_bags.jpeg",caption:"A typical morning walk through Dartmouth's campus: bag after bag of recyclable cans, all of it headed for the landfill."},
+        {type:"p",text:"Recyclable waste on campus is almost always contaminated (cans mixed with cups, liquid, food, and trash), and recycling facilities in New Hampshire treat any (even slightly) contaminated bag as garbage. A single fraternity, for example, discards hundreds of thousands of recyclable cans per term, producing tens of thousands of avoidable kg of CO2 in waste aluminum. The goal was a simple device that sorts the waste at the point of disposal and returns a clean, recyclable bag of cans."},
+        {type:"h",text:"Our design approach"},
+        {type:"p",text:"We put the intelligence into the machine, not the user: whatever someone could possibly drop in gets sorted automatically. After considering approaches like AI object-recognition and batch-caching designs (both too costly and complex), we settled on a two-sensor verification approach."},
+        {type:"p",text:"Smart Sort sorts on two factors: <strong>weight</strong> and <strong>inductance</strong> (metal detection). An object in the ~10\u201325 g empty-can window that also reads as metal goes to the clean \u201ccan\u201d side; anything failing either check (full cans, bottles, cups, food, trash) goes to \u201ctrash.\u201d Essentially, it worked as a two-factor authentication method."},
+        {type:"h",text:"From complex approaches to one simple door"},
+        {type:"p",text:"Our early designs used multiple lever-actuated doors, adding moving parts and failure points. The final design, we realized, should follow the principle that simpler is always better: a single door that opens to 45 degrees to divert a verified empty can, or drops fully open to send anything else to trash."},
+        {type:"imgpair",src1:"ss_door_design.jpeg",cap1:"An early 3D-printed door design I modeled for the sorting mechanism.",src2:"ss_mechanism.jpeg",cap2:"An early trashcan-lid prototype with the intake tube mounted underneath."},
+        {type:"img",src:"ss_martin_prototype.jpeg",caption:"Me with one of our early working prototypes, built around a simple cardboard intake tube."},
+        {type:"img",src:"ss_sorting.jpeg",caption:"Sorting and re-bagging real fraternity waste in the shop. This project certainly wasn't always clean and glamorous, but it was always fun!"},
+        {type:"h",text:"How well it worked"},
+        {type:"p",text:"We benchmarked Smart Sort against real fraternity waste bags, which were only ~33.5% cans (60.2% cups, rest other waste). After sorting, the recovered \u201ccan\u201d bag was <strong>98% pure</strong>, clean enough to recycle."},
+        {type:"img",src:"ss_sorted_spread.jpeg",caption:"A benchmarking run laid out: the cups, cans, and bottles that make up a typical contaminated fraternity waste bag."},
+        {type:"h",text:"Testing it in the field"},
+        {type:"p",text:"We ran four rounds of testing with user feedback after each. Two \u201cdamage testing\u201d nights at Dartmouth's dining hall exposed failures: a power issue fried the servo after two cans, and users kept reaching into the chute. In response, we added a tamper feature that retracts the door when touched, swapped the power supply, added instructional signage, and sped the door up ~75% to clear queues."},
+        {type:"imgpair",src1:"ss_field_testing.jpeg",cap1:"Debugging the machine mid-event at Foco Late Night.",src2:"ss_field_thumbsup.jpeg",cap2:"Students trying out Smart Sort at a live event."},
+        {type:"p",text:"A three-hour live run at the Alpha Chi Alpha fraternity sorted with <strong>94.4% accuracy</strong>. Liquid separation was the clearest result: the \u201ctrash\u201d side collected ~1.04 kg of liquid versus ~0.12 kg on the \u201ccan\u201d side, roughly a nine-fold reduction in contamination."},
+        {type:"img",src:"ss_liquid.png",caption:"Liquid collected on the \u201Ctrash\u201D side (~1.04 kg) versus the recovered \u201Ccan\u201D side (~0.12 kg) after the Alpha Chi field test."},
+        {type:"h",text:"The final build"},
+        {type:"img",src:"ss_early_lid.jpeg",caption:"The final one-door mechanism we designed: a single servo-driven door (green mount, black servo) sorting with the load and inductance sensors."},
+        {type:"img",src:"ss_team.jpeg",caption:"The Smart Sort team with our finished build."},
+        {type:"p",text:"This was my first full engineering project start to finish. Thank you to my teammates and to Professor Vicky May."}
+      ],
+      tags:["Product Design","Arduino","Sensors","Mechanical Design","Iterative Testing","Sustainability"],
+      report:"https://bpb-us-e1.wpmucdn.com/journeys.dartmouth.edu/dist/1/11306/files/2024/12/Smart-Sort-Final-Report-Team-13-ENGS-21-Martin-Skacel-Riti-Singh-Michal-Tvrdon-Tanner-Lee-1.pdf",
+      link:"https://journeys.dartmouth.edu/martincskacel27/smart-sort-a-better-way-to-recycle-on-campus/"
+    },
+    {
+      title:"Electrifying the Grid: AECC Conductors for California\u2019s Clean Energy Future",
+      meta:"TuckLAB: Energy \u00b7 Winter 2025 \u00b7 Energy Systems",
+      category:"Energy",
+      glyph:"\u26A1",
+      gradient:"linear-gradient(140deg,#3f3c2a,#26281b)",
+      image:"aecc_crosssection.png",
+      blurb:"A team pitch at Tuck\u2019s TuckLAB: Energy program, proposing advanced AECC conductors to upgrade California\u2019s aging transmission grid.",
+      content:[
+        {type:"p",text:"<div style='display:flex;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:8px'><strong style='color:var(--moss)'>Skills:</strong><span class='pill'>Energy Systems</span><span class='pill'>Grid Infrastructure</span><span class='pill'>Transmission</span><span class='pill'>Clean Energy Policy</span><span class='pill'>Technical Pitch</span></div>"},
+        {type:"p",text:"A TuckLAB: Energy team project pitching a transmission-grid upgrade to a panel of judges: replacing California's aging conductors with Aluminum-Encapsulated Carbon-Core (AECC) designs.<br>\u2022 Researched the technical case (roughly double capacity, ~50% lower losses, thermal-sag resistance)<br>\u2022 Benchmarked real FPL and Montana-Dakota Utilities deployments as proof points<br>\u2022 Mapped the CPUC regulatory path and financing, and prioritized wildfire-risk and rural deployment"},
+        {type:"p",text:"This was a team project for the Tuck School of Business's TuckLAB: Energy program. We researched and pitched a grid upgrade to a panel of judges: replacing California's aging transmission lines with Aluminum-Encapsulated Carbon-Core (AECC) conductors."},
+        {type:"h",text:"The problem"},
+        {type:"p",text:"Most of California's grid runs on ACSR conductors, a steel-cored design from 1908 that is prone to thermal \u201csag.\u201d Sag reduces ground clearance and can ignite fires; the 2022 Fairview Fire (28,000+ acres) was triggered by a sagging line. A warming, higher-demand grid with development of AI needs to carry more power more safely than our current century-old hardware allows."},
+        {type:"h",text:"The technology we proposed"},
+        {type:"p",text:"AECC wraps a pre-tensioned carbon core in an aluminum encapsulation layer beneath the conducting aluminum. Versus ACSR, it roughly doubles capacity, cuts line losses by ~50%, and resists thermal sag (200\u00B0C vs. 75\u00B0C) along with corrosion, ice, and UV, while remaining compatible with existing infrastructure, so no new equipment or retraining is required."},
+        {type:"img",src:"aecc_crosssection.png",caption:"TS Conductor\u2019s AECC design: a pre-tensioned carbon core inside an aluminum encapsulation layer."},
+        {type:"img",src:"aecc_timeline.png",caption:"How transmission conductors have evolved from traditional ACSR to modern low-sag designs."},
+        {type:"h",text:"Has it been done before?"},
+        {type:"p",text:"Yes, which grounded our pitch in real figures. A 17-mile Florida Power & Light project delivered 78% higher capacity and finished a year early; an 11-mile Montana-Dakota Utilities project doubled capacity and saved ~$2.5 million in construction costs."},
+        {type:"img",src:"aecc_results.png",caption:"The two existing AECC deployments we used as proof points: MDU and FPL."},
+        {type:"h",text:"Our recommendation"},
+        {type:"p",text:"We recommended deploying AECC first in high wildfire-risk areas and rural, end-of-line communities. We also mapped the CPUC regulatory path and existing financing, including a $600 million federal grant for California grid upgrades, and tied the proposal to the state's goal of 18,800 MW of new clean resources by 2028."},
+        {type:"img",src:"aecc_team.png",caption:"Our TuckLAB: Energy team after presenting the final pitch."}
+      ],
+      tags:["Energy Systems","Grid Infrastructure","Transmission","Clean Energy Policy","Technical Pitch"],
+      report:"https://bpb-us-e1.wpmucdn.com/journeys.dartmouth.edu/dist/1/11306/files/2025/03/Unleashing-AECC-Conductors-for-Californias-Clean-Energy-Future.pdf",
+      link:"https://journeys.dartmouth.edu/martincskacel27/2025/01/10/november-2024-electrifying-the-grid-unleashing-aecc-conductors-for-californias-clean-energy-future/"
+    },
+    {
+      title:"Engineering Wood for Changing Climate Conditions",
+      meta:"UMaine \u00b7 Summer 2024 \u00b7 Materials Research",
+      category:"Sustainability",
+      glyph:"\uD83E\uDEB5",
+      gradient:"linear-gradient(140deg,#3a402a,#23281b)",
+      image:"https://journeys.dartmouth.edu/martincskacel27/files/2025/03/2024-07-15_22-22-45_633-1024x768.jpeg",
+      blurb:"A summer in UMaine\u2019s Dr. Eric Landis lab testing how wood behaves under different temperatures and humidity, exploring timber as a low-carbon structural material for a changing climate.",
+      content:[
+        {type:"p",text:"<div style='display:flex;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:8px'><strong style='color:var(--moss)'>Skills:</strong><span class='pill'>Instron Testing</span><span class='pill'>Materials Testing</span><span class='pill'>MATLAB</span><span class='pill'>Creep & Tensile Analysis</span><span class='pill'>Sustainable Building</span></div>"},
+        {type:"p",text:"A summer in Dr. Eric Landis's lab at the University of Maine analyzing how wood behaves mechanically under varying temperature and humidity.<br>\u2022 Ran short-term, high-speed, and micro-sample creep tests on Instron machines<br>\u2022 Prepared specimens on the bandsaw, lathe, table saw, and disc sander, and collected moisture data<br>\u2022 Processed and graphed creep and tensile results in MATLAB and maintained the lab datasets"},
+        {type:"p",text:"I spent this summer doing research in Dr. Eric Landis's Civil and Environmental Engineering Lab at the University of Maine, analyzing the mechanical behavior of wood under varying temperature, humidity, and geometry. I ran short-term, high-speed, and micro-sample creep tests on Instron machines to inform climate-aware material selection and the understanding of wood creep."},
+        {type:"p",text:"<strong>University of Maine: Civil and Environmental Engineering Department, Dr. Eric Landis Lab.</strong>"},
+        {type:"imgpair",src1:"https://journeys.dartmouth.edu/martincskacel27/files/2025/03/2024-07-15_22-22-45_633-1024x768.jpeg",cap1:"",src2:"https://journeys.dartmouth.edu/martincskacel27/files/2025/03/2024-07-16_21-52-11_556-1-768x1024.jpeg",cap2:""},
+        {type:"imgpair",src1:"https://journeys.dartmouth.edu/martincskacel27/files/2025/03/2024-07-18_16-13-30_430-768x1024.jpeg",cap1:"",src2:"https://journeys.dartmouth.edu/martincskacel27/files/2025/03/2024-08-14_10-53-19_205-768x1024.jpeg",cap2:""},
+        {type:"p",text:"I prepared and tested wood samples daily, cutting specimens to dimension on the bandsaw, lathe, table saw, and disc sander, and collecting measurement and moisture data. I processed and graphed creep and tensile results in MATLAB, and maintained lab records and large datasets."}
+      ],
+      tags:["Instron Testing","Materials Testing","MATLAB","Creep & Tensile Analysis","Sustainable Building"],
+      link:"https://journeys.dartmouth.edu/martincskacel27/engineering-wood-for-changing-climate-conditions/"
+    },
+    {
+      title:"Tracking Glacial Geophysical Changes in a Warming World",
+      meta:"The Stretch \u00b7 Fall 2025 \u00b7 Glacier Geophysics",
+      category:"The Stretch",
+      glyph:"\uD83D\uDEF0\uFE0F",
+      gradient:"linear-gradient(140deg,#24463a,#172c23)",
+      image:"glac-survey.jpg",
+      blurb:"Surveying the Athabasca Glacier with precision GPS and radio echo sounding to measure how fast it flows and how deep it sits in its valley.",
+      content:[
+        {type:"p",text:"<div style='display:flex;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:8px'><strong style='color:var(--moss)'>Skills:</strong><span class='pill'>Differential GPS</span><span class='pill'>Radio Echo Sounding</span><span class='pill'>Velocity Mapping</span><span class='pill'>Data Reduction</span><span class='pill'>Uncertainty Analysis</span><span class='pill'>Fieldwork</span></div>"},
+        {type:"p",text:"A field study of the Athabasca Glacier in the Columbia Icefield measuring how fast it flows and how thick it is.<br>\u2022 Surveyed ice-flow stakes with geodetic differential GPS and reduced the data into a velocity map<br>\u2022 Imaged the glacier bed with radio echo sounding to build a depth profile<br>\u2022 Reconciled both datasets to a single bedrock feature, with full uncertainty analysis"},
+        {type:"p",text:"This project was a field study of the Athabasca Glacier in the Columbia Icefield under glaciologist Professor Bob Hawley, measuring flow speed and ice thickness using two geophysical methods: precise GPS surveying and radio echo sounding."},
+        {type:"img",src:"glac-approach.jpg",caption:"Heading up the Athabasca toward the icefall on the first day of fieldwork."},
+        {type:"h",text:"Mapping the velocity field with GPS"},
+        {type:"p",text:"We re-surveyed stakes set in the ice days earlier using a geodetic differential GPS setup (a roving receiver against a fixed base station to remove atmospheric error in post-processing), occupying each stake for 10 to 15 minutes."},
+        {type:"img",src:"glac-survey.jpg",caption:"Surveying a stake: leveling the GPS antenna on the bipod while we log occupation times in field books."},
+        {type:"p",text:"I handled data reduction for several stakes: averaging per-second position fixes, discarding low-quality readings, converting to UTM, and dividing distance moved by elapsed time for a velocity, with an uncertainty derived from the spread in the position data. The output was a velocity map of speed and direction per stake."},
+        {type:"img",src:"glac-velocity-map.jpg",caption:"The finished velocity map. Blue arrows are velocity vectors (length scaled to speed), labeled with the measured speed \u00b1 uncertainty and bearing at each stake."},
+        {type:"p",text:"Flow was faster up-glacier and slower lower down, and faster at the center than the edges, the expected trend from friction against the valley walls. Several left-side stakes were faster than expected and skewed leftward; the trend held across multiple stakes, and the depth data later explained it."},
+        {type:"h",text:"Imaging the bed with radio echo sounding"},
+        {type:"p",text:"We also measured thickness with radio echo sounding: a transmitter and receiving antenna send an electromagnetic pulse into the ice, and the echo off the bed reads on an oscilloscope. With the known radio-wave speed in ice (167.6 m/microsecond), two-way travel time converts directly to depth. We reduced the travel times into depths and plotted them as a side-view bed profile."},
+        {type:"imgpair",src1:"glac-receiver.jpg",cap1:"One of the GPS receiver units (\u201CATH 2\u201D) mounted on its pole out on the ice.",src2:"glac-team.jpg",cap2:"The crew on the Athabasca during the geophysics segment."},
+        {type:"p",text:"The bed came out clearly asymmetric, deeper on the left side, suggesting one side of the bedrock floor sits lower. We cleaned the profile by removing two points the data-takers flagged as difficult to read; the trend held after cleanup."},
+        {type:"imgpair",src1:"glac-depth-profile.jpg",cap1:"The depth profile across the glacier (outliers removed). The bed sits deeper on the left side.",src2:"glac-depth-with-outliers.jpg",cap2:"The same profile with the two flagged outliers still in, before cleanup."},
+        {type:"h",text:"What the two datasets showed together"},
+        {type:"p",text:"The two measurements agreed: the velocity map's faster, left-skewed stakes matched the depth profile's deeper left side. Thicker ice drives faster surface flow, so the deeper left side explains both the higher speeds and the sideways motion. Two independent techniques pointed at the same bedrock feature. Thank you to Professor Bob Hawley."}
+      ],
+      tags:["Differential GPS","Radio Echo Sounding","Velocity Mapping","Data Reduction","Uncertainty Analysis","Fieldwork"],
+      link:"https://journeys.dartmouth.edu/martincskacel27/the-stretch-geotechnical-research-in-the-west/"
+    },
+    {
+      title:"Mapping 200 Years of Glacial Retreat & Climate Drivers",
+      meta:"The Stretch \u00b7 Fall 2025 \u00b7 Glacial Forefront Mapping",
+      category:"The Stretch",
+      glyph:"\uD83E\uDDCA",
+      gradient:"linear-gradient(140deg,#23413f,#16292a)",
+      image:"retreat-forefield.jpg",
+      blurb:"Mapping where the Athabasca Glacier used to be over the last 200 years, then testing whether summer or annual temperature better explains its retreat.",
+      content:[
+        {type:"p",text:"<div style='display:flex;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:8px'><strong style='color:var(--moss)'>Skills:</strong><span class='pill'>Glacial Retreat</span><span class='pill'>Surficial Mapping</span><span class='pill'>Climate Attribution</span><span class='pill'>UTM / Excel Analysis</span><span class='pill'>Field Methods</span><span class='pill'>Data Interpretation</span></div>"},
+        {type:"p",text:"A reconstruction of the Athabasca Glacier's retreat over the last ~200 years and a test of which climate signal drives it.<br>\u2022 Mapped dated former ice-front positions from forefield evidence and historical aerial photos<br>\u2022 Calculated retreat rates in Excel via UTM conversion, isolating a ~25.5 m/yr peak interval<br>\u2022 Attributed the fastest retreat to summer (not annual) temperature, with a 5 to 10 year response lag"},
+        {type:"p",text:"We reconstructed the Athabasca Glacier's retreat over the last ~200 years, converted it into retreat rates, and tested which climate signal best explains it. The glacier has retreated since the mid-1800s, leaving a readable record of former positions on the ground."},
+        {type:"img",src:"retreat-overlook.jpg",caption:"Earlier in the segment, looking at the bedrock structure and ice-age history of the Bow Valley."},
+        {type:"h",text:"Reading the forefield"},
+        {type:"p",text:"We mapped the glacier's forefield (recently deglaciated ground recording the past) through end moraines, striations and flutes (flow direction), and eskers, erratics, and plowed boulders. We combined this ground evidence with dated aerial photos (1939, 1958, 1992, and others) and old survey markers to place the ice front at many points back to the early 1800s."},
+        {type:"img",src:"retreat-forefield.jpg",caption:"Working through the deposits in the forefield to identify former ice-front positions. I got a little muddy."},
+        {type:"imgpair",src1:"retreat-map-group.jpg",cap1:"Our group\u2019s master retreat map: 10+ dated ice-front positions and 30+ striation strikes on the 2004 satellite image.",src2:"retreat-map-field.jpg",cap2:"My personal field map, with dated former ice fronts and measured striation directions."},
+        {type:"p",text:"At one location, striations pointed in slightly different directions, likely recording separate glacial advances that regrew at slightly different angles each time, possibly influenced by older moraines or shifts in subglacial meltwater."},
+        {type:"h",text:"Determining retreat rates from our map:"},
+        {type:"p",text:"We calculated retreat rates in Excel by converting ice-front coordinates to UTM, measuring distance between successive fronts, and dividing by years elapsed. Across eight intervals since 1890, retreat held a steady 10 to 15 m/yr for most of the record, with two slower early intervals (~6.5\u20139 m/yr) and one outlier: ~25.5 m/yr from 1925 to 1935, more than double the typical rate."},
+        {type:"img",src:"retreat-rate-table.jpg",caption:"The retreat-rate calculations: UTM conversion, distance between dated fronts, and the resulting rate in m/yr for each interval."},
+        {type:"h",text:"Summer or annual temperature?"},
+        {type:"p",text:"We compared the retreat rates calculated above against mean summer and mean annual regional temperature records. The fast 1925\u20131935 retreat aligned with a sharp summer-temperature peak in the early 1920s, but the annual record showed that same window as unusually cold."},
+        {type:"imgpair",src1:"retreat-temp-summer.jpg",cap1:"Mean summer temperature anomaly, with a sharp warm spike in the early 1920s (circled) just before the fastest retreat.",src2:"retreat-temp-annual.jpg",cap2:"Mean annual temperature anomaly, where the same window is a cold dip (circled)."},
+        {type:"p",text:"That contradiction is the key result: fastest retreat in a hot summer but cold annual period means the glacier responds to summer temperature, not the yearly average, which is physically reasonable since summer is the melt season. The 1915\u20131925 window is the clearest case: hot summers, a cold annual mean, and the fastest retreat in the record."},
+        {type:"p",text:"Aligning the temperature peaks with retreat intervals also gave a rough response time: early-1920s summer warmth corresponds to peak retreat in 1925\u20131935, a lag of roughly 5 to 10 years behind the climate forcing!"}
+      ],
+      tags:["Glacial Retreat","Surficial Mapping","Climate Attribution","UTM / Excel Analysis","Field Methods","Data Interpretation"],
+      link:"https://journeys.dartmouth.edu/martincskacel27/the-stretch-geotechnical-research-in-the-west/"
+    },
+    {
+      title:"Locating Ancient River Systems for Water & CO2 Storage",
+      meta:"The Stretch \u00b7 Fall 2025 \u00b7 Sedimentology & Subsurface Reservoirs",
+      category:"The Stretch",
+      glyph:"\u26F0\uFE0F",
+      gradient:"linear-gradient(140deg,#3f3c2a,#26281b)",
+      image:"reservoir-mapping.jpg",
+      blurb:"A two-part field project in the Bighorn Basin: reconstructing an ancient river system from outcrops, then evaluating the resulting sandstone as a subsurface reservoir and proposing a drill site.",
+      content:[
+        {type:"p",text:"<div style='display:flex;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:8px'><strong style='color:var(--moss)'>Skills:</strong><span class='pill'>Stratigraphy</span><span class='pill'>Facies Analysis</span><span class='pill'>Paleocurrent Analysis</span><span class='pill'>Reservoir Volumetrics</span><span class='pill'>Risk Assessment</span><span class='pill'>Carbon Storage</span><span class='pill'>Fieldwork</span></div>"},
+        {type:"p",text:"A two-part Bighorn Basin field project reconstructing an ancient river system, then assessing its sandstone as a subsurface reservoir for water and carbon storage.<br>\u2022 Measured a stratigraphic section of Cretaceous Greybull Sandstone and subdivided it into five interpreted facies<br>\u2022 Used paleocurrent data and rose diagrams to map buried ancient channel geometry<br>\u2022 Calculated reservoir storage volume potentials and proposed a justified drill site with a risk score"},
+        {type:"p",text:"This project targeted the Cretaceous Greybull Sandstone (within the Cloverly Formation), a set of discontinuous channel bodies. We reconstructed how the rocks formed, then located the sandstone in the subsurface and assessed it as a reservoir for water and potential carbon storage."},
+        {type:"img",src:"walkin.JPG",caption:"Mapping the Cloverly section at Fox Mesa, Bighorn Basin, Wyoming."},
+        {type:"h",text:"Part 1: Measuring the section and reconstructing the environment"},
+        {type:"p",text:"We measured a detailed stratigraphic section through the Morrison and Cloverly formations, recording grain size, sorting, sedimentary structures, and bedding, and subdivided it into five facies as a logged column tied to a grain-size scale."},
+        {type:"img",src:"reservoir-strat-column.jpg",caption:"Our measured Morrison and Cloverly stratigraphic column, with the five facies and legend."},
+        {type:"p",text:"The five facies ran from basal Morrison sandstone, through bentonite, a red Cloverly paleosol at the formation contact, a calcareous quartz arenite with herringbone crossbedding, and the Greybull sandstone (medium-grained, well-sorted, calcareous, planar-crossbedded). Read in sequence, the section records shifting sea levels near a Cretaceous seaway, alternating between deltaic, tidal, and shoreline conditions, with herringbone crossbedding indicating bidirectional tidal flow and the Greybull sandstone a beach or dune setting. This explained the key field observation: the Greybull occurs as isolated channel bodies, not a continuous sheet."},
+        {type:"h",text:"Part 2: Paleocurrents, reservoir volume, and our drilling recommendation"},
+        {type:"p",text:"We treated the Greybull sandstone as a reservoir. We collected paleocurrent measurements across seven sites, compiled them into rose diagrams, and used the mean flow directions (~180\u2013210 degrees at most sites) to project channel margins and map the buried valley geometry, identifying two stacked channels (older and younger) and their overlap."},
+        {type:"img",src:"reservoir-crosssection-sketch.jpg"},
+        {type:"p",text:"We calculated storage potential per channel from area, thickness, and effective porosity (estimated 0.15\u20130.20 from grain size, rounding, and cementation; used 0.18). The younger channel held ~10.7 million m\u00b3 of storage potential versus 2.5 million for the older, driven by greater thickness and area."},
+        {type:"img",src:"reservoir-storage-table.jpg",caption:"Storage potential for the older and younger Greybull channels: area \u00d7 thickness \u00d7 effective porosity."},
+        {type:"p",text:"We proposed drilling 1.3 km west of the feed lot, slightly north of Shell Creek, to ~100 m depth where the channels overlap. Surrounding shale and mudstone (Thermopolis, Sykes Mountain) provide trap rock; drilling the shallower younger channel first leaves the deeper older channel in reserve."},
+        {type:"p",text:"Finally, we quantified the risk of this location, scoring reservoir quality and trap integrity for a Geologic Risk Factor of about 5. Limiting factors were uncertainty in the porosity estimate, the continuity and thickness of the sealing mud, and field-estimated channel dimensions. This project ran the full path from outcrop measurement to a subsurface volume estimate and a justified drill decision, the same workflow used in reservoir hydrology and carbon storage assessment."}
+      ],
+      tags:["Stratigraphy","Facies Analysis","Paleocurrent Analysis","Reservoir Volumetrics","Risk Assessment","Carbon Storage","Fieldwork"],
+      link:"https://journeys.dartmouth.edu/martincskacel27/the-stretch-geotechnical-research-in-the-west/"
+    },
+    {
+      title:"Surficially Mapping the Eastern Sierras",
+      meta:"The Stretch \u00b7 Fall 2025 \u00b7 Surficial Geology & Quaternary Climate",
+      category:"The Stretch",
+      glyph:"\uD83D\uDDFA\uFE0F",
+      gradient:"linear-gradient(140deg,#3a4250,#20262f)",
+      image:"sierra-snarl-sign.jpg",
+      blurb:"Two field projects in the Eastern Sierra: a surficial geologic map of McGee Valley with relative-age dating of glacial moraines, and a stratigraphic reconstruction of the nearby Wilson Creek Formation to read past lake levels and climate.",
+      content:[
+        {type:"p",text:"<div style='display:flex;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:8px'><strong style='color:var(--moss)'>Skills:</strong><span class='pill'>Surficial Mapping</span><span class='pill'>Glacial Geomorphology</span><span class='pill'>Relative-Age Dating</span><span class='pill'>Stratigraphy</span><span class='pill'>Tephrochronology</span><span class='pill'>Paleoclimate</span><span class='pill'>Fieldwork</span></div>"},
+        {type:"p",text:"Two Eastern Sierra field projects in Quaternary geology, based out of the Sierra Nevada Aquatic Research Laboratory.<br>\u2022 Produced a full nine-unit surficial geologic map of McGee Valley<br>\u2022 Relative-age dated glacial moraines via boulder-frequency counts and weathering surveys<br>\u2022 Reconstructed Mono Lake's past levels from a Wilson Creek Formation section dated by tephrochronology"},
+        {type:"p",text:"This project was based at the Sierra Nevada Aquatic Research Laboratory (SNARL) near Mammoth Lakes, California, under Professor Meredith Kelly. It covered two Quaternary geology projects: surficial mapping of glacial deposits in McGee Valley, and a stratigraphic study of the Wilson Creek Formation at Mono Lake to reconstruct past lake levels and climate."},
+        {type:"h",text:"Project 1: McGee Valley surficial map"},
+        {type:"p",text:"We produced a surficial geologic map of McGee Valley from aerial imagery and ground fieldwork, mapping nine surficial units (glacial moraines, outwash, alluvial fans, stream alluvium, lake floor, wetland, landslide deposits) plus bedrock, each defined by sediment texture and landform morphology. The map includes a full unit legend, structural and geomorphic symbols, scale bar, and north arrow."},
+        {type:"img",src:"sierra-mcgee-map.jpg",caption:"Our finished McGee Valley surficial geologic map."},
+        {type:"p",text:"The central task was relative-age dating of the moraines using two semi-quantitative methods: surface-boulder frequency counts (boulders over 30 cm within a 30 m by 4 m belt, three counts per moraine, with separate counter and recorder to avoid bias), since boulder frequency drops as a moraine ages; and granitic-boulder weathering, recording the share of intact abraded surfaces versus pitted, disintegrating ones. Combined with morphology, this separated two generations (an older Tahoe and younger Tioga moraine) and ordered the units into a sequence of advance, retreat, and outwash."},
+        {type:"img",src:"sierra-mcgee-valley.jpg",caption:"McGee Valley, with glacial landforms and aspen-lined drainage below the snow-covered Sierra crest."},
+        {type:"h",text:"Project 2: Wilson Creek Formation, Mono Lake"},
+        {type:"p",text:"We reconstructed the history of Mono Lake, a closed-basin lake whose level directly records regional hydroclimate. I measured and sketched a stratigraphic section of the Wilson Creek Formation at Mill Creek: ~15 m of laminated lacustrine silts and clays interbedded with rhyolitic and basaltic ash, over basal fluvial gravels. Soft-sediment deformation and glacial dropstones indicate deposition in a deep, glacier-fed lake."},
+        {type:"imgpair",src1:"sierra-wcf-sketch.jpg",cap1:"My measured stratigraphic section of the WCF at Mill Creek, with vertical and horizontal scales and ash sequences A\u2013E.",src2:"sierra-wcf-legend.jpg",cap2:"The accompanying unit and ash-sequence legend with sedimentological descriptions."},
+        {type:"p",text:"We dated the section by tephrochronology, matching its ash layers to the five basin-wide marker sequences (A youngest through E oldest) and the dated type section at Wilson Creek (Zimmerman et al., 2011), assigning ages from ~14 ka at the top to ~66 ka at the base to order the units and interpret depositional environments through time."},
+        {type:"img",src:"sierra-wcf-outcrop.png",caption:"The Wilson Creek Formation exposed in a section at Mill Creek, with a marker ash bed running through the laminated lacustrine sediments."},
+        {type:"p",text:"The section records a high lake stand through the last glacial period, when Mono Lake (Glacial Lake Russell) stood ~200 m above its present level. The silts, dropstones, and ash correlate with cold intervals in the marine oxygen-isotope record and the glacial extents mapped in McGee Valley, tying lake level directly to regional glaciation and climate, and making it a useful indicator of present and future hydroclimate."},
+        {type:"img",src:"sierra-mono-tufa.jpg",caption:"Presenting with my group at Mono Lake on the structural geology of Tufa Towers."}
+      ],
+      tags:["Surficial Mapping","Glacial Geomorphology","Relative-Age Dating","Stratigraphy","Tephrochronology","Paleoclimate","Fieldwork"],
+      link:"https://journeys.dartmouth.edu/martincskacel27/the-stretch-geotechnical-research-in-the-west/"
+    },
+    {
+      title:"SP Crater: Volcanic Field Mapping & Lava Flow Properties",
+      meta:"The Stretch \u00b7 Fall 2025 \u00b7 Volcanology & GIS",
+      category:"The Stretch",
+      glyph:"\uD83C\uDF0B",
+      gradient:"linear-gradient(140deg,#2a2320,#15110f)",
+      image:"sp-map-thumbnail.png",
+      blurb:"Field and remote-sensing mapping of the SP Crater lava flows in the San Francisco Volcanic Field, Arizona. Produced a surficial geologic map of 16 units, established the eruptive sequence, and estimated flow volume and yield strength from DEM and field data.",
+      content:[
+        {type:"p",text:"<div style='display:flex;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:8px'><strong style='color:var(--moss)'>Skills:</strong><span class='pill'>Geologic Mapping</span><span class='pill'>Volcanology</span><span class='pill'>QGIS</span><span class='pill'>Remote Sensing</span><span class='pill'>DEM Analysis</span><span class='pill'>Relative-Age Dating</span><span class='pill'>Fieldwork</span></div>"},
+        {type:"p",text:"Field and remote-sensing mapping of SP Crater and its lava flows in Arizona's San Francisco Volcanic Field.<br>\u2022 Produced a 16-unit surficial geologic map, mapping normal faults and grabens<br>\u2022 Reconstructed the full eruptive sequence and concluded SP crater is two stacked flows, not one<br>\u2022 Estimated flow volume from a DEM profile (0.555 km\u00b3) and calculated yield strength (~24,280 Pa)"},
+        {type:"p",text:"For this project, we mapped SP Crater and its lava flows in the San Francisco Volcanic Field north of Flagstaff, Arizona, a well-preserved basaltic-andesite cinder cone. We combined remote-sensing interpretation of aerial and satellite imagery with field mapping, then used QGIS and field data to estimate the flow's physical properties."},
+        {type:"img",src:"sp-crater-rim.jpg",caption:"The SP Crater cinder cone rim, flanked by ash, lapilli, and bombs."},
+        {type:"h",text:"Surficial geologic map"},
+        {type:"p",text:"We produced a surficial geologic map of a 1,260 m wide area centered on the crater, identifying 16 units: three tephra cones (QT1, QT2, SP as QT3), seven lava flows (QF1\u2013QF7), a fissure unit, Quaternary alluvium, water, and the underlying Permian Kaibab Limestone. Units were distinguished by composition, texture (aphanitic, vesicular, blocky), oxidation color, and degree of weathering, lichen, and vegetation cover. We also mapped a north-south normal fault that splits cone QT2 and forms a graben through the bedrock."},
+        {type:"imgpair",src1:"sp-map.png",cap1:"Our SP Crater surficial geologic map. 16 units mapped, with fault and contact symbols.",src2:"sp-map-legend.png",cap2:"Map unit legend and structural symbols: fault, contact, and approximate contact."},
+        {type:"h",text:"Eruptive sequence"},
+        {type:"p",text:"We reconstructed the full sequence from cross-cutting relationships, superposition, and relative-age indicators (weathering, lichen, and vegetation cover): Kaibab Limestone deposition, faulting, formation and partial self-destruction of the first cinder cone, successive flows, a second faulted cone and its flows, fissure eruptions along the fault, and finally SP Crater with its two stacked flows. We concluded SP comprises two separate stacked flows, not one (supporting Rittenour et al. (2012) over Hodges (1962)), based on distinct oxidation, vesicularity, blockiness, and vegetation cover between the surfaces."},
+        {type:"h",text:"Flow volume from DEM and field data"},
+        {type:"p",text:"We measured the SP flow area in QGIS at 12.33 km\u00b2. We estimated volume two ways: a field thickness of 7.62 m gave 0.094 km\u00b3, while a DEM elevation profile across the flow gave a more accurate ~45 m thickness and a volume of 0.555 km\u00b3, showing the field estimate was far too low."},
+        {type:"img",src:"sp-elevation-profile.jpg",caption:"DEM elevation-versus-distance profile across the SP lava flow (vertical exaggeration 30x), used to constrain flow thickness."},
+        {type:"img",src:"sp-volume-table.jpg",caption:"Area and volume calculations comparing the field-estimate and DEM-profile thicknesses."},
+        {type:"h",text:"Yield strength"},
+        {type:"p",text:"We calculated the lava flow yield strength at ~24,280 Pa using Y = \u03c1gH\u00b2 / W, with a density of 2,750 kg/m\u00b3, the 45 m DEM thickness, and a 2,250 m flow width."},
+        {type:"img",src:"sp-yield-table.jpg",caption:"Yield-strength calculation from flow density, thickness, and width."},
+        {type:"h",text:"Remote sensing compared with our field work:"},
+        {type:"p",text:"Imagery resolved large-scale features best: flow boundaries, full extents, cone outlines, and the fault trace. Fieldwork then confirmed ambiguous boundaries and supplied the composition, morphology, and relative-age data needed to separate the flows and order the sequence. Reference: Gullikson et al. (2021), USGS Open-File Report 2021-1072."}
+      ],
+      tags:["Geologic Mapping","Volcanology","QGIS","Remote Sensing","DEM Analysis","Relative-Age Dating","Fieldwork"],
+      link:"https://journeys.dartmouth.edu/martincskacel27/the-stretch-geotechnical-research-in-the-west/"
+    },
+  ];
+
+  /* ===== RENDER TILES + FILTERS ===== */
+const grid=document.getElementById('projGrid');
+  function makeCard(p){
+    const card=document.createElement('article'); card.className='card';
+    const mediaBg=p.image?`background-image:url('${p.image}');`:`background:${p.gradient};`;
+    card.innerHTML=`
+      <div class="card-media" style="${mediaBg}">
+        <span class="card-tag">${p.category}</span>
+        ${p.image?'':`<span class="glyph">${p.glyph}</span>`}
+      </div>
+      <div class="card-body">
+        <h3>${p.title}</h3>
+        <div class="meta">${p.meta}</div>
+        <p>${p.blurb}</p>
+        <div class="card-foot">Read more <span class="arrow">\u2192</span></div>
+      </div>`;
+    card.addEventListener('click',()=>openModal(p));
+    return card;
+  }
+  function renderCards(filter='All'){
+    grid.innerHTML='';
+    PROJECTS.filter(p=>filter==='All'||p.category===filter).forEach((p,i)=>{
+      const c=makeCard(p);
+      c.style.opacity=0; c.style.transform='translateY(18px)';
+      c.style.transition='opacity .5s ease, transform .5s ease';
+      grid.appendChild(c);
+      requestAnimationFrame(()=>setTimeout(()=>{c.style.opacity=1;c.style.transform='translateY(0)';},i*55));
+    });
+  }
+  renderCards();
+
+  /* ===== MODAL ===== */
+  const overlay=document.getElementById('modalOverlay');
+  const mClose=document.getElementById('modalClose');
+  const mMedia=document.getElementById('modalMedia');
+  const mGlyph=document.getElementById('modalGlyph');
+  const mMeta=document.getElementById('modalMeta');
+  const mTitle=document.getElementById('modalTitle');
+  const mBody=document.getElementById('modalBody');
+  const mTags=document.getElementById('modalTags');
+  const mLink=document.getElementById('modalLink');
+function openModal(p){
+    // Hero image/media at top
+    let heroHtml='';
+    if(p.image){
+      const isGif=p.image.toLowerCase().endsWith('.gif');
+      heroHtml=`<img class="modal-hero-img${isGif?' is-gif':''}" src="${p.image}" alt="${p.title}" />`;
+    } else {
+      heroHtml=`<div class="modal-media" style="background:${p.gradient}"><span class="glyph">${p.glyph}</span></div>`;
+    }
+
+    // Body: prefer rich "content" array; fall back to plain "detail" paragraphs
+    let bodyHtml='';
+    if(p.content && p.content.length){
+      bodyHtml = p.content.map(block=>{
+        if(block.type==='h')   return `<h4 class="modal-h">${block.text}</h4>`;
+        if(block.type==='p')   return `<p>${block.text}</p>`;
+        if(block.type==='img') return `<figure class="modal-fig"><img src="${block.src}" alt=""/>${block.caption?`<figcaption>${block.caption}</figcaption>`:''}</figure>`;
+        if(block.type==='imgpair') return `<div class="modal-pair"><figure class="modal-fig"><img src="${block.src1}" alt=""/>${block.cap1?`<figcaption>${block.cap1}</figcaption>`:''}</figure><figure class="modal-fig"><img src="${block.src2}" alt=""/>${block.cap2?`<figcaption>${block.cap2}</figcaption>`:''}</figure></div>`;
+        if(block.type==='video') return `<div class="modal-fig" style="position:relative;padding-bottom:56.25%;height:0;overflow:hidden;border-radius:10px;border:1px solid var(--line);"><iframe src="https://www.youtube.com/embed/${block.id}" title="${block.caption||''}" frameborder="0" allow="accelerometer;autoplay;clipboard-write;encrypted-media;gyroscope;picture-in-picture" allowfullscreen style="position:absolute;top:0;left:0;width:100%;height:100%;"></iframe>${block.caption?`<figcaption style="font-family:var(--font-mono);font-size:.74rem;color:var(--faint);margin-top:8px;">${block.caption}</figcaption>`:''}</div>`;
+        return '';
+      }).join('');
+    } else {
+      bodyHtml = p.detail.map(d=>`<p>${d}</p>`).join('');
+    }
+
+    let reportLink = p.report ? `<a class="modal-report" href="${p.report}" target="_blank" rel="noopener">&#128196; Read the final report</a>` : '';
+    let journeysLink = '';
+
+    document.querySelector('.modal').innerHTML=`
+      <button class="modal-close" id="modalClose" aria-label="Close">&#10005;</button>
+      ${heroHtml}
+      <div class="modal-content">
+        <div class="meta">${p.meta}</div>
+        <h3>${p.title}</h3>
+        ${bodyHtml}
+        <div class="modal-tags">${p.tags.map(t=>`<span class="pill">${t}</span>`).join('')}</div>
+        ${reportLink}
+        ${journeysLink}
+      </div>`;
+    document.getElementById('modalClose').addEventListener('click',closeModal);
+    overlay.classList.add('open');
+    document.body.style.overflow='hidden';
+  }
+  function closeModal(){overlay.classList.remove('open');document.body.style.overflow='';}
+  mClose.addEventListener('click',closeModal);
+  overlay.addEventListener('click',e=>{if(e.target===overlay)closeModal();});
+  document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal();});
+
+  /* ===== NAV ===== */
+  const nav=document.getElementById('nav');
+  window.addEventListener('scroll',()=>nav.classList.toggle('scrolled',window.scrollY>40));
+  const navToggle=document.getElementById('navToggle');
+  const navLinks=document.getElementById('navLinks');
+  navToggle.addEventListener('click',()=>navLinks.classList.toggle('open'));
+  navLinks.querySelectorAll('a').forEach(a=>a.addEventListener('click',()=>navLinks.classList.remove('open')));
+
+  /* ===== SCROLL REVEAL ===== */
+  const io=new IntersectionObserver((entries)=>{
+    entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target);}});
+  },{threshold:0.15});
+  document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+
+  /* ===== ACTIVE NAV HIGHLIGHT ===== */
+  const navLinkEls=document.querySelectorAll('.nav-links a[href^="#"]');
+  const navSections=[...navLinkEls].map(a=>document.querySelector(a.getAttribute('href'))).filter(Boolean);
+  const navObserver=new IntersectionObserver((entries)=>{
+    entries.forEach(e=>{
+      if(e.isIntersecting){
+        const id='#'+e.target.id;
+        navLinkEls.forEach(a=>a.classList.toggle('active',a.getAttribute('href')===id));
+      }
+    });
+  },{rootMargin:'-45% 0px -50% 0px'});
+  navSections.forEach(s=>navObserver.observe(s));
+
+  /* ===== COUNTER (supports decimals, e.g. GPA 3.99) ===== */
+  const cObserver=new IntersectionObserver((entries)=>{
+    entries.forEach(e=>{
+      if(!e.isIntersecting)return;
+      const el=e.target;
+      const raw=+el.dataset.count;                 // e.g. 399
+      const dec=el.dataset.decimal?+el.dataset.decimal:0; // e.g. 2 -> divide by 100
+      const divisor=Math.pow(10,dec);
+      const target=raw/divisor;                    // e.g. 3.99
+      let n=0; const steps=34; const inc=raw/steps;
+      const tick=()=>{
+        n+=inc;
+        if(n>=raw){el.textContent=target.toFixed(dec);}
+        else{el.textContent=(n/divisor).toFixed(dec);requestAnimationFrame(tick);}
+      };
+      tick(); cObserver.unobserve(el);
+    });
+  },{threshold:0.5});
+  document.querySelectorAll('[data-count]').forEach(c=>cObserver.observe(c));
+
+  /* ===== YEAR ===== */
+  document.getElementById('year').textContent=new Date().getFullYear();
+  </script>
+</body>
+</html>
